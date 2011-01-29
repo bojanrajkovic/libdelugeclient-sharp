@@ -3,16 +3,30 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libdelugeclient-sharp", "libdelugeclient-sharp\libdelugeclient-sharp.csproj", "{DB06A55C-89FF-46A9-ABE5-D9F095C6B740}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libjsonrpc-sharp", "libjsonrpc-sharp\libjsonrpc-sharp.csproj", "{7EBD2D06-ABAD-4735-BC48-F080D40976CB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E441AFEB-04D0-4C8F-9E7A-064CA2AEE939}"
+	ProjectSection(SolutionItems) = preProject
+		libdelugeclient-sharp.snk = libdelugeclient-sharp.snk
+		libjsonrpc-sharp.snk = libjsonrpc-sharp.snk
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7EBD2D06-ABAD-4735-BC48-F080D40976CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EBD2D06-ABAD-4735-BC48-F080D40976CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EBD2D06-ABAD-4735-BC48-F080D40976CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EBD2D06-ABAD-4735-BC48-F080D40976CB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB06A55C-89FF-46A9-ABE5-D9F095C6B740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DB06A55C-89FF-46A9-ABE5-D9F095C6B740}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB06A55C-89FF-46A9-ABE5-D9F095C6B740}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB06A55C-89FF-46A9-ABE5-D9F095C6B740}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = libdelugeclient-sharp\libdelugeclient-sharp.csproj
