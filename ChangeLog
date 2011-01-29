@@ -1,5 +1,10 @@
 2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* libjsonrpc-sharp.snk: Remove strong name key for
+	libjsonrpc-sharp.
+
+2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* libdelugeclient-sharp.sln: Remove libjsonrpc-sharp. Just
 	realized it's crazy for me to write a JSON-RPC library when
 	there's a liberally licensed version out there.
