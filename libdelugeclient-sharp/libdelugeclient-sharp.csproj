@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>libdelugeclientsharp</RootNamespace>
     <AssemblyName>libdelugeclient-sharp</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\libdelugeclient-sharp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -50,4 +50,10 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <ProjectReference Include="..\libjsonrpc-sharp\libjsonrpc-sharp.csproj">
+      <Project>{7EBD2D06-ABAD-4735-BC48-F080D40976CB}</Project>
+      <Name>libjsonrpc-sharp</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

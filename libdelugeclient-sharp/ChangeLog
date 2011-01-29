@@ -1,0 +1,5 @@
+2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
+	* libdelugeclient-sharp.csproj: Set both projects to 4.0, set
+	references, update headers for libjsonrpc-sharp.
+
