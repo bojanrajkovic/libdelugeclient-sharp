@@ -43,6 +43,9 @@
       <Properties>
         <Policies>
           <StandardHeader inheritsSet="MITX11License" />
+          <ChangeLogPolicy inheritsSet="Mono">
+            <MessageStyle LineAlign="0" />
+          </ChangeLogPolicy>
         </Policies>
       </Properties>
     </MonoDevelop>
