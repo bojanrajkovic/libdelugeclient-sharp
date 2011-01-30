@@ -1,5 +1,14 @@
 2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* File.cs:
+	* Torrent.cs:
+	* Tracker.cs:
+	* DelugeClient.cs: Implement methods and objects to fix
+	missing methods from previous commit. Also, convert Trackers
+	and Files to autoproperties.
+
+2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* DelugeClient.cs: Implement torrent deserialization from
 	GetTorrents call.
 

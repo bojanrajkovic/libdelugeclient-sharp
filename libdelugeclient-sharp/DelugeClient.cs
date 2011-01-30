@@ -118,14 +118,14 @@ namespace CodeRinseRepeat.Deluge
 			foreach (var hash in torrentsDict.Keys) {
 				JsonObject data = (JsonObject) torrentsDict[hash];
 
-				Torrent t = new Torrent {
+				yield return new Torrent {
 					ConnectedPeers = (int) data[Torrent.Fields.ConnectedPeers],
 					ConnectedSeeds = (int) data[Torrent.Fields.ConnectedSeeds],
 					DistributedCopies = (double) data[Torrent.Fields.DistributedCopies],
 					Downloaded = (int) data[Torrent.Fields.Downloaded],
 					DownloadSpeed = (double) data[Torrent.Fields.DownloadSpeed],
 					ETA = (int) data[Torrent.Fields.ETA],
-					files = GetFiles (data),
+					Files = GetFiles (data, hash),
 					Hash = hash,
 					IsAutoManaged = (bool) data[Torrent.Fields.IsAutoManaged],
 					MaxDownloadSpeed = (double) data[Torrent.Fields.MaxDownloadSpeed],
@@ -142,10 +142,43 @@ namespace CodeRinseRepeat.Deluge
 					TotalSize = (int) data[Torrent.Fields.TotalSize],
 					TotalUploaded = (int) data[Torrent.Fields.Uploaded],
 					TrackerHost = (string) data[Torrent.Fields.TrackerHost],
-					trackers = GetTrackers (data),
+					Trackers = GetTrackers (data, hash),
 				};
+			}
+		}
 
-				yield return t;
+		private IEnumerable<File> GetFiles (Dictionary<string, object> data, string hash) {
+			JsonObject torrentData = (JsonObject) data[hash];
+			JsonArray files = (JsonArray) torrentData[Torrent.Fields.Files];
+			JsonArray fileProgress = (JsonArray) torrentData[Torrent.Fields.FileProgress];
+			JsonArray filePriority = (JsonArray) torrentData[Torrent.Fields.FilePriorities];
+
+			foreach (JsonObject file in files) {
+				int index = (int) file[File.Fields.Index];
+
+				int priority = (int) filePriority[index];
+				double progress = (double) fileProgress[index];
+
+				yield return new File {
+					Index = index,
+					Offset = (int) file[File.Fields.Offset],
+					Path = (string) file[File.Fields.Path],
+					Priority = priority,
+					Progress = progress,
+					Size = (int) file[File.Fields.Size],
+				};
+			}
+		}
+
+		private IEnumerable<Tracker> GetTrackers (Dictionary<string, object> data, string hash) {
+			JsonObject torrentData = (JsonObject) data[hash];
+			JsonArray trackers = (JsonArray) torrentData[Torrent.Fields.Trackers];
+
+			foreach (JsonObject tracker in trackers) {
+				yield return new Tracker {
+					Url = (string) tracker[Tracker.Fields.Url],
+					Tier = (int) tracker[Tracker.Fields.Tier],
+				};
 			}
 		}
 	}

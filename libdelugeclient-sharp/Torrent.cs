@@ -92,22 +92,12 @@ namespace CodeRinseRepeat.Deluge
 		public DateTime TimeAdded { get; internal set; }
 		public string TrackerHost { get; internal set; }
 		public int TotalUploaded { get; internal set; }
-
-		internal ICollection<File> files = new LinkedList<File> ();
-		public IEnumerable<File> Files {
-			get { return files; }
-		}
-
+		public IEnumerable<File> Files { get; internal set; }
 		public int Downloaded { get; internal set; }
 		public int TotalSeeds { get; internal set; }
 		public int ConnectedSeeds { get; internal set; }
 		public string Name { get; internal set; }
-
-		internal ICollection<Tracker> trackers = new LinkedList<Tracker> ();
-		public IEnumerable<Tracker> Trackers {
-			get { return trackers; }
-		}
-
+		public IEnumerable<Tracker> Trackers { get; internal set; }
 		public bool IsAutoManaged { get; internal set; }
 		public int Queue { get; internal set; }
 		public double DistributedCopies { get; internal set; }

@@ -29,9 +29,23 @@ namespace CodeRinseRepeat.Deluge
 {
 	public class File
 	{
-		public File ()
+		public static class Fields
 		{
+			public const string Index = "index";
+			public const string Path = "path";
+			public const string Offset = "offset";
+			public const string Size = "size";
 		}
+
+		public int Index { get; internal set; }
+		public string Path { get; internal set; }
+		public int Offset { get; internal set; }
+		public int Size { get; internal set; }
+
+		// TODO: Turn this into a proper enum.
+		public int Priority { get; internal set; }
+
+		public double Progress { get; internal set; }
 	}
 }
 

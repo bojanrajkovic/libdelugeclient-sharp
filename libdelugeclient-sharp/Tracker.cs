@@ -29,9 +29,14 @@ namespace CodeRinseRepeat.Deluge
 {
 	public class Tracker
 	{
-		public Tracker ()
+		public static class Fields
 		{
+			public const string Url = "url";
+			public const string Tier = "tier";
 		}
+
+		public string Url { get; internal set; }
+		public int Tier { get; internal set; }
 	}
 }
 
