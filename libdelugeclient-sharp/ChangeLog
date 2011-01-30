@@ -1,5 +1,10 @@
 2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* libdelugeclient-sharp.csproj: Add torrent fields class to
+	the project, so it actually compiles.
+
+2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* DelugeClient.cs: Implement a few more method calls.
 
 2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
