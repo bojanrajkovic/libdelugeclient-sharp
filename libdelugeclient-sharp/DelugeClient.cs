@@ -43,7 +43,7 @@ namespace CodeRinseRepeat.Deluge
 		public DelugeClient (Uri serviceUri)
 		{
 			ServiceUri = serviceUri;
-			serviceClient = new WebClient ();
+			serviceClient = new CookieClient ();
 		}
 
 		public DelugeClient (string uri, int port) : this (new Uri (string.Format ("{0}:{1}", uri, port))) {
@@ -68,6 +68,18 @@ namespace CodeRinseRepeat.Deluge
 
 		private void DoServiceCallAsync (string method, Action<Dictionary<string, object>> callback, params object[] parameters) {
 			Task.Factory.StartNew (() => DoServiceCall (method, parameters)).ContinueWith (task => callback (task.Result));
+		}
+
+		public bool Login (string password) {
+			var result = DoServiceCall ("auth.login", password);
+
+			if (result["error"] != null)
+				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", result["error"]));
+			else return (bool) result["result"];
+		}
+
+		public void LoginAsync (string password, Action<bool> callback) {
+			Task.Factory.StartNew (() => Login (password)).ContinueWith (task => callback (task.Result));
 		}
 	}
 }

@@ -1,5 +1,9 @@
 2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* DelugeClient.cs: Implement Login method.
+
+2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* CookieClient.cs:
 	* libdelugeclient-sharp.csproj: Add a WebClient that supports
 	cookies.
