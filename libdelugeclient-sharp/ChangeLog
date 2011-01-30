@@ -1,5 +1,13 @@
 2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* File.cs:
+	* State.cs:
+	* Tracker.cs:
+	* libdelugeclient-sharp.csproj: Add type skeletons to fix the
+	build break I introduced in the previous commit.
+
+2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* Torrent.cs: Add all of the properties for the torrent, and
 	fix some formatting in the inner class.
 
