@@ -41,6 +41,8 @@ namespace CodeRinseRepeat.Deluge
 		private WebClient serviceClient;
 		private int callId;
 
+		private static readonly DateTime unixTime = new DateTime (1970, 1, 1, 0, 0, 0, 0);
+
 		public DelugeClient (Uri serviceUri)
 		{
 			ServiceUri = serviceUri;
@@ -103,7 +105,7 @@ namespace CodeRinseRepeat.Deluge
 			else return ((Dictionary<string, object>) result["result"]);
 		}
 
-		public Dictionary<string, object> GetTorrents () {
+		public IEnumerable<Torrent> GetTorrents () {
 			var fields = Torrent.Fields.All;
 
 			var result = DoServiceCall ("core.get_torrents_status", new Dictionary<string, string> (), fields);
@@ -111,7 +113,40 @@ namespace CodeRinseRepeat.Deluge
 			if (result["error"] != null)
 				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", ((Dictionary<string, object>) result["error"])["message"]));
 
-			return ((Dictionary<string, object>) result["result"]);
+			var torrentsDict = (Dictionary<string, object>) result["result"];
+
+			foreach (var hash in torrentsDict.Keys) {
+				JsonObject data = (JsonObject) torrentsDict[hash];
+
+				Torrent t = new Torrent {
+					ConnectedPeers = (int) data[Torrent.Fields.ConnectedPeers],
+					ConnectedSeeds = (int) data[Torrent.Fields.ConnectedSeeds],
+					DistributedCopies = (double) data[Torrent.Fields.DistributedCopies],
+					Downloaded = (int) data[Torrent.Fields.Downloaded],
+					DownloadSpeed = (double) data[Torrent.Fields.DownloadSpeed],
+					ETA = (int) data[Torrent.Fields.ETA],
+					files = GetFiles (data),
+					Hash = hash,
+					IsAutoManaged = (bool) data[Torrent.Fields.IsAutoManaged],
+					MaxDownloadSpeed = (double) data[Torrent.Fields.MaxDownloadSpeed],
+					MaxUploadSpeed = (double) data[Torrent.Fields.MaxUploadSpeed],
+					Name = (string) data[Torrent.Fields.Name],
+					Progress = (double) data[Torrent.Fields.Progress],
+					Queue = (int) data[Torrent.Fields.Queue],
+					Ratio = (double) data[Torrent.Fields.Ratio],
+					SavePath = (string) data[Torrent.Fields.SavePath],
+					State = (State) Enum.Parse (typeof (State), (string) data[Torrent.Fields.State]),
+					TimeAdded = unixTime.AddSeconds ((double) data[Torrent.Fields.TimeAdded]),
+					TotalPeers = (int) data[Torrent.Fields.TotalPeers],
+					TotalSeeds = (int) data[Torrent.Fields.TotalSeeds],
+					TotalSize = (int) data[Torrent.Fields.TotalSize],
+					TotalUploaded = (int) data[Torrent.Fields.Uploaded],
+					TrackerHost = (string) data[Torrent.Fields.TrackerHost],
+					trackers = GetTrackers (data),
+				};
+
+				yield return t;
+			}
 		}
 	}
 }
