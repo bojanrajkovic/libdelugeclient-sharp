@@ -1,3 +1,10 @@
+2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
+	* Torrent.cs:
+	* TorrentFields.cs:
+	* libdelugeclient-sharp.csproj: Add Torrent.cs, and move
+	TorrentFields into it as a nested class named just Fields.
+
 2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
 	* libdelugeclient-sharp.csproj: Add torrent fields class to
