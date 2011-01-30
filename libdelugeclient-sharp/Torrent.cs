@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeRinseRepeat.Deluge
 {
@@ -75,6 +76,19 @@ namespace CodeRinseRepeat.Deluge
 				DownloadSpeed, UploadSpeed, ETA, Ratio, DistributedCopies, IsAutoManaged, TimeAdded, TrackerHost, SavePath,
 				Label
 			};
+		}
+
+		public override string ToString () {
+			return string.Format ("[Torrent: MaxDownloadSpeed={0}, DownloadSpeed={1}, ConnectedPeers={2}, Ratio={3}," +
+				"TotalPeers={4}, TotalSize={5}, State={6}, MaxUploadSpeed={7}, ETA={8}, SavePath={9}, Progress={10}," +
+				"TimeAdded={11}, TrackerHost={12}, TotalUploaded={13}, Files=[{14}], Downloaded={15}, TotalSeeds={16}," +
+				"ConnectedSeeds={17}, Name={18}, Trackers=[{19}], IsAutoManaged={20}, Queue={21}, DistributedCopies={22}]",
+				MaxDownloadSpeed, DownloadSpeed, ConnectedPeers, Ratio, TotalPeers, TotalSize, State, MaxUploadSpeed, ETA,
+				SavePath, Progress, TimeAdded, TrackerHost, TotalUploaded,
+				string.Join (",", Files.Select (f => f.ToString ())), Downloaded, TotalSeeds, ConnectedSeeds,
+				Name, string.Join (",", Trackers.Select (t => t.ToString ())), IsAutoManaged, Queue,
+				DistributedCopies
+			);
 		}
 
 		public string Hash { get; internal set; }

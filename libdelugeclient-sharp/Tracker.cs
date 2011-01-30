@@ -35,6 +35,10 @@ namespace CodeRinseRepeat.Deluge
 			public const string Tier = "tier";
 		}
 
+		public override string ToString () {
+			return string.Format ("[Tracker: Url={0}, Tier={1}]", Url, Tier);
+		}
+
 		public string Url { get; internal set; }
 		public int Tier { get; internal set; }
 	}
