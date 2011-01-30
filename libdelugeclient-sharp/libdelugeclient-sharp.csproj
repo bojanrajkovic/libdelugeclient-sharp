@@ -47,6 +47,7 @@
     <Compile Include="Hyena.Json\Token.cs" />
     <Compile Include="Hyena.Json\Tokenizer.cs" />
     <Compile Include="Hyena.Json\TokenType.cs" />
+    <Compile Include="CookieClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
