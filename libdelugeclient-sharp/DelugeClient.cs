@@ -104,7 +104,7 @@ namespace CodeRinseRepeat.Deluge
 		}
 
 		public Dictionary<string, object> GetTorrents () {
-			var fields = TorrentFields.All;
+			var fields = Torrent.Fields.All;
 
 			var result = DoServiceCall ("core.get_torrents_status", new Dictionary<string, string> (), fields);
 
