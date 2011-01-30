@@ -1,0 +1,12 @@
+2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
+	* Token.cs:
+	* JsonArray.cs:
+	* Tokenizer.cs:
+	* TokenType.cs:
+	* Serializer.cs:
+	* JsonObject.cs:
+	* Deserializer.cs:
+	* IJsonCollection.cs: Pull in Hyena.Json for JSON
+	serialization/deserialization.
+

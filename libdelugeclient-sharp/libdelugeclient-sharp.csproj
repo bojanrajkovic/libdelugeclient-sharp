@@ -34,9 +34,19 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="DelugeClient.cs" />
+    <Compile Include="Hyena.Json\Deserializer.cs" />
+    <Compile Include="Hyena.Json\IJsonCollection.cs" />
+    <Compile Include="Hyena.Json\JsonArray.cs" />
+    <Compile Include="Hyena.Json\JsonObject.cs" />
+    <Compile Include="Hyena.Json\Serializer.cs" />
+    <Compile Include="Hyena.Json\Token.cs" />
+    <Compile Include="Hyena.Json\Tokenizer.cs" />
+    <Compile Include="Hyena.Json\TokenType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -51,4 +61,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="Hyena.Json\" />
+  </ItemGroup>
 </Project>

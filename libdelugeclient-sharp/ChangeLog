@@ -1,5 +1,10 @@
 2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* libdelugeclient-sharp.csproj: Pull in Hyena.Json for JSON
+	serialization/deserialization.
+
+2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* libdelugeclient-sharp.csproj: Add
 	System.Runtime.Serialization reference.
 
