@@ -39,15 +39,14 @@ namespace CodeRinseRepeat.Deluge
 	public class DelugeClient
 	{
 		public Uri ServiceUri { get; private set; }
-		private WebClient serviceClient;
 		private int callId;
+		private CookieContainer cookies;
 
 		private static readonly DateTime unixTime = new DateTime (1970, 1, 1, 0, 0, 0, 0);
 
 		public DelugeClient (Uri serviceUri)
 		{
 			ServiceUri = serviceUri;
-			serviceClient = new CookieClient ();
 		}
 
 		public DelugeClient (string uri, int port) : this (new Uri (string.Format ("{0}:{1}", uri, port))) {
@@ -64,7 +63,13 @@ namespace CodeRinseRepeat.Deluge
 
 			string jsonPayload = new Serializer (callObject).Serialize ();
 
+			var serviceClient = new CookieClient ();
+
+			if (cookies != null) serviceClient.Cookies = cookies;
+
 			byte[] returnData = serviceClient.UploadData (ServiceUri, Encoding.UTF8.GetBytes (jsonPayload));
+
+			cookies = serviceClient.Cookies;
 
 			// All this because deluge always returns gzip data, despite what you send for Accept-Encoding.
 			var responseReader = new StreamReader (new GZipStream (new MemoryStream (returnData), CompressionMode.Decompress), Encoding.UTF8);

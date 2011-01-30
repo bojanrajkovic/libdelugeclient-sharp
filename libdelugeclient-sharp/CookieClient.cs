@@ -30,11 +30,14 @@ namespace CodeRinseRepeat.Deluge
 {
 	public class CookieClient : WebClient
 	{
-		private CookieContainer cookies = new CookieContainer ();
+		public CookieContainer Cookies { get; internal set; }
 
 		protected override WebRequest GetWebRequest (Uri address) {
 			var request = base.GetWebRequest (address);
-			if (request is HttpWebRequest) (request as HttpWebRequest).CookieContainer = cookies;
+			if (request is HttpWebRequest) {
+				if (Cookies == null) Cookies = new CookieContainer ();
+				(request as HttpWebRequest).CookieContainer = Cookies;
+			}
 			return request;
 		}
 	}

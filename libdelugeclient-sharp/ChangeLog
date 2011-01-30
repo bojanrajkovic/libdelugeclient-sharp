@@ -1,5 +1,12 @@
 2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* CookieClient.cs:
+	* DelugeClient.cs: Make DelugeClient more threadsafe by not
+	reusing a single WebClient. We'll just keep the cookies
+	around, exposing them via our custom WebClient.
+
+2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* DelugeClient.cs: Make DoServiceCall thread-safe.
 
 2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
