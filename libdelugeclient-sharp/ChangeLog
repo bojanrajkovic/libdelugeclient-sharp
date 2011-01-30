@@ -1,5 +1,12 @@
 2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* DelugeClient.cs: Implement GetTorrentsAsync and
+	GetAvailablePlugins, and unify error handling in the
+	DoServiceCall method. Also implement checking that response
+	ID's match request ID's.
+
+2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* DelugeClient.cs: Implement async GetTorrents, remove
 	GetTorrentInfo, it doesn't do what I thought it did.
 

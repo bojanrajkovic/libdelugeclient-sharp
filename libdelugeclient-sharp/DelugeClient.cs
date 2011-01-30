@@ -52,7 +52,7 @@ namespace CodeRinseRepeat.Deluge
 		public DelugeClient (string uri, int port) : this (new Uri (string.Format ("{0}:{1}", uri, port))) {
 		}
 
-		private Dictionary<string, object> DoServiceCall (string method, params object[] parameters) {
+		public Dictionary<string, object> DoServiceCall (string method, params object[] parameters) {
 			var callObject = new Dictionary<string, object> {
 				{"id", ++callId},
 				{"method", method},
@@ -66,19 +66,45 @@ namespace CodeRinseRepeat.Deluge
 			// All this because deluge always returns gzip data, despite what you send for Accept-Encoding.
 			var responseReader = new StreamReader (new GZipStream (new MemoryStream (returnData), CompressionMode.Decompress), Encoding.UTF8);
 
-			return new Deserializer (responseReader).Deserialize () as Dictionary<string, object>;
+			var response = new Deserializer (responseReader).Deserialize () as Dictionary<string, object>;
+
+			if ((int) response["id"] != callId)
+				throw new ApplicationException (string.Format ("Response ID and original call ID don't match. Expected {0}, received {1}.", callId, response["id"]));
+
+			if (response["error"] != null)
+				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", ((JsonObject) response["error"])["message"]));
+
+			return response;
 		}
 
 		private void DoServiceCallAsync (string method, Action<Dictionary<string, object>> callback, params object[] parameters) {
 			Task.Factory.StartNew (() => DoServiceCall (method, parameters)).ContinueWith (task => callback (task.Result));
 		}
 
+		/*
+		 * Interesting methods: { "core.upload_plugin", "core.rescan_plugins", "core.force_recheck", "core.glob",
+		 * "core.remove_torrent", "core.resume_all_torrents", "core.queue_top", "core.set_torrent_options",
+		 * "core.set_torrent_prioritize_first_last", "core.get_session_state", "core.set_torrent_move_completed",
+		 * "core.get_available_plugins", "core.set_torrent_file_priorities", "core.get_config", "core.disable_plugin",
+		 * "core.test_listen_port", "core.connect_peer", "core.enable_plugin", "core.get_filter_tree",
+		 * "core.set_torrent_remove_at_ratio", "core.get_torrent_status", "core.get_config_values", "core.pause_torrent",
+		 * "core.move_storage", "core.force_reannounce", "core.add_torrent_file", "core.get_listen_port",
+		 * "core.set_torrent_move_completed_path", "core.set_torrent_stop_at_ratio", "core.rename_folder",
+		 * "core.add_torrent_url", "core.get_enabled_plugins", "core.get_libtorrent_version", "core.get_path_size",
+		 * "core.set_torrent_max_connections", "core.get_config_value", "core.get_session_status", "core.create_torrent",
+		 * "core.add_torrent_magnet", "core.set_torrent_stop_ratio", "core.set_torrent_auto_managed",
+		 * "core.pause_all_torrents", "core.rename_files", "core.get_free_space",
+		 * "core.queue_bottom", "core.set_torrent_max_upload_speed", "core.resume_torrent",
+		 * "core.set_torrent_max_upload_slots", "core.set_config", "core.get_cache_status", "core.queue_down",
+		 * "core.get_num_connections", "core.set_torrent_max_download_speed", "core.queue_up", "core.set_torrent_trackers"
+		 * }
+		 *
+		 * Implemented methods: { auth.login, system.listMethods, core.get_torrents_status }
+		 */
+
 		public bool Login (string password) {
 			var result = DoServiceCall ("auth.login", password);
-
-			if (result["error"] != null)
-				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", ((Dictionary<string, object>) result["error"])["message"]));
-			else return (bool) result["result"];
+			return (bool) result["result"];
 		}
 
 		public void LoginAsync (string password, Action<bool> callback) {
@@ -87,25 +113,16 @@ namespace CodeRinseRepeat.Deluge
 
 		public IEnumerable<string> ListMethods () {
 			var result = DoServiceCall ("system.listMethods");
-
-			if (result["error"] != null)
-				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", ((Dictionary<string, object>) result["error"])["message"]));
-			else return ((List<object>) result["result"]).Cast<string> ();
+			return ((IList<object>) result["result"]).Cast<string> ();
 		}
 
 		public void ListMethodsAsync (Action<IEnumerable<string>> callback) {
 			Task.Factory.StartNew (() => ListMethods ()).ContinueWith (task => callback (task.Result));
 		}
 
-
 		public IEnumerable<Torrent> GetTorrents () {
 			var fields = Torrent.Fields.All;
-
 			var result = DoServiceCall ("core.get_torrents_status", new Dictionary<string, string> (), fields);
-
-			if (result["error"] != null)
-				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", ((Dictionary<string, object>) result["error"])["message"]));
-
 			var torrentsDict = (Dictionary<string, object>) result["result"];
 
 			foreach (var hash in torrentsDict.Keys) {
@@ -140,8 +157,13 @@ namespace CodeRinseRepeat.Deluge
 			}
 		}
 
-		public void GetTorrents (Action<IEnumerable<Torrent>> callback) {
-			return Task.Factory.StartNew (() => GetTorrents ()).ContinueWith (task => callback (task.Result));
+		public void GetTorrentsAsync (Action<IEnumerable<Torrent>> callback) {
+			Task.Factory.StartNew (() => GetTorrents ()).ContinueWith (task => callback (task.Result));
+		}
+
+		public IEnumerable<string> GetAvailablePlugins () {
+			var result = DoServiceCall ("core.get_available_plugins");
+			return ((IList<object>) result["result"]).Cast<string> ();
 		}
 
 		private IEnumerable<File> GetFiles (Dictionary<string, object> data, string hash) {
