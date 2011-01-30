@@ -1,5 +1,10 @@
 2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* TorrentFields.cs: Add class with constants for torrent
+	fields to use when making requests.
+
+2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* DelugeClient.cs: Implement Login method.
 
 2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
