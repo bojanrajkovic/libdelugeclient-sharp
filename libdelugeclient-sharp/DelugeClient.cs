@@ -31,6 +31,7 @@ using Hyena.Json;
 using System.Text;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 
 namespace CodeRinseRepeat.Deluge
 {
@@ -74,12 +75,43 @@ namespace CodeRinseRepeat.Deluge
 			var result = DoServiceCall ("auth.login", password);
 
 			if (result["error"] != null)
-				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", result["error"]));
+				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", ((Dictionary<string, object>) result["error"])["message"]));
 			else return (bool) result["result"];
 		}
 
 		public void LoginAsync (string password, Action<bool> callback) {
 			Task.Factory.StartNew (() => Login (password)).ContinueWith (task => callback (task.Result));
+		}
+
+		public IEnumerable<string> ListMethods () {
+			var result = DoServiceCall ("system.listMethods");
+
+			if (result["error"] != null)
+				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", ((Dictionary<string, object>) result["error"])["message"]));
+			else return ((List<object>) result["result"]).Cast<string> ();
+		}
+
+		public void ListMethodsAsync (Action<IEnumerable<string>> callback) {
+			Task.Factory.StartNew (() => ListMethods ()).ContinueWith (task => callback (task.Result));
+		}
+
+		public Dictionary<string, object> GetTorrentInfo (string torrentHash) {
+			var result = DoServiceCall ("web.get_torrent_info");
+
+			if (result["error"] != null)
+				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", ((Dictionary<string, object>) result["error"])["message"]));
+			else return ((Dictionary<string, object>) result["result"]);
+		}
+
+		public Dictionary<string, object> GetTorrents () {
+			var fields = TorrentFields.All;
+
+			var result = DoServiceCall ("core.get_torrents_status", new Dictionary<string, string> (), fields);
+
+			if (result["error"] != null)
+				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", ((Dictionary<string, object>) result["error"])["message"]));
+
+			return ((Dictionary<string, object>) result["result"]);
 		}
 	}
 }
