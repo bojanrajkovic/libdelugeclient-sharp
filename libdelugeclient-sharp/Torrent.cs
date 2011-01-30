@@ -1,4 +1,4 @@
-// 
+//
 // Torrent.cs
 //  
 // Author:
@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 
 namespace CodeRinseRepeat.Deluge
 {
@@ -61,17 +62,55 @@ namespace CodeRinseRepeat.Deluge
 			public const string IsAutoManaged = "is_auto_managed";
 			public const string TimeAdded = "time_added";
 			public const string TrackerHost = "tracker_host";
+
 			public static readonly string[] All = new string[] {
-			Name, State, SavePath, MaxDownloadSpeed, MaxUploadSpeed, DownloadSpeed, UploadSpeed, ConnectedSeeds, 
-			TotalSeeds, ConnectedPeers, TotalPeers, ETA, Downloaded, Uploaded, TotalSize, Progress, Label, Trackers, 
-			Files, Index, Path, Size, FileProgress, FilePriorities, Queue, Ratio, DistributedCopies, IsAutoManaged, TimeAdded, 
-			TrackerHost
-		};
+				Name, State, SavePath, MaxDownloadSpeed, MaxUploadSpeed, DownloadSpeed, UploadSpeed, ConnectedSeeds,
+				TotalSeeds, ConnectedPeers, TotalPeers, ETA, Downloaded, Uploaded, TotalSize, Progress, Label, Trackers,
+				Files, Index, Path, Size, FileProgress, FilePriorities, Queue, Ratio, DistributedCopies, IsAutoManaged,
+				TimeAdded, TrackerHost
+			};
+
 			public static readonly string[] WebUIDefaults = new string[] {
-			Queue, Name, TotalSize, State, Progress, ConnectedSeeds, TotalSeeds, ConnectedPeers, TotalPeers, 
-			DownloadSpeed, UploadSpeed, ETA, Ratio, DistributedCopies, IsAutoManaged, TimeAdded, TrackerHost, SavePath, Label
-		};
+				Queue, Name, TotalSize, State, Progress, ConnectedSeeds, TotalSeeds, ConnectedPeers, TotalPeers,
+				DownloadSpeed, UploadSpeed, ETA, Ratio, DistributedCopies, IsAutoManaged, TimeAdded, TrackerHost, SavePath,
+				Label
+			};
 		}
+
+		public string Hash { get; internal set; }
+		public double MaxDownloadSpeed { get; internal set; }
+		public double DownloadSpeed { get; internal set; }
+		public int ConnectedPeers { get; internal set; }
+		public double Ratio { get; internal set; }
+		public int TotalPeers { get; internal set; }
+		public int TotalSize { get; internal set; }
+		public State State { get; internal set; }
+		public double MaxUploadSpeed { get; internal set; }
+		public int ETA { get; internal set; }
+		public string SavePath { get; internal set; }
+		public double Progress { get; internal set; }
+		public DateTime TimeAdded { get; internal set; }
+		public string TrackerHost { get; internal set; }
+		public int TotalUploaded { get; internal set; }
+
+		internal ICollection<File> files = new LinkedList<File> ();
+		public IEnumerable<File> Files {
+			get { return files; }
+		}
+
+		public int Downloaded { get; internal set; }
+		public int TotalSeeds { get; internal set; }
+		public int ConnectedSeeds { get; internal set; }
+		public string Name { get; internal set; }
+
+		internal ICollection<Tracker> trackers = new LinkedList<Tracker> ();
+		public IEnumerable<Tracker> Trackers {
+			get { return trackers; }
+		}
+
+		public bool IsAutoManaged { get; internal set; }
+		public int Queue { get; internal set; }
+		public double DistributedCopies { get; internal set; }
 	}
 }
 
