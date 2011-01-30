@@ -97,13 +97,6 @@ namespace CodeRinseRepeat.Deluge
 			Task.Factory.StartNew (() => ListMethods ()).ContinueWith (task => callback (task.Result));
 		}
 
-		public Dictionary<string, object> GetTorrentInfo (string torrentHash) {
-			var result = DoServiceCall ("web.get_torrent_info");
-
-			if (result["error"] != null)
-				throw new ApplicationException (string.Format ("Received error message from Deluge. Message: {0}", ((Dictionary<string, object>) result["error"])["message"]));
-			else return ((Dictionary<string, object>) result["result"]);
-		}
 
 		public IEnumerable<Torrent> GetTorrents () {
 			var fields = Torrent.Fields.All;
@@ -145,6 +138,10 @@ namespace CodeRinseRepeat.Deluge
 					Trackers = GetTrackers (torrentsDict, hash),
 				};
 			}
+		}
+
+		public void GetTorrents (Action<IEnumerable<Torrent>> callback) {
+			return Task.Factory.StartNew (() => GetTorrents ()).ContinueWith (task => callback (task.Result));
 		}
 
 		private IEnumerable<File> GetFiles (Dictionary<string, object> data, string hash) {
