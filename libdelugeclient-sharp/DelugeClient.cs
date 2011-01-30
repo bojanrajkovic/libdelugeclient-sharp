@@ -32,6 +32,7 @@ using System.Text;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 
 namespace CodeRinseRepeat.Deluge
 {
@@ -53,8 +54,10 @@ namespace CodeRinseRepeat.Deluge
 		}
 
 		public Dictionary<string, object> DoServiceCall (string method, params object[] parameters) {
+			var callId = Interlocked.Increment (ref this.callId);
+
 			var callObject = new Dictionary<string, object> {
-				{"id", ++callId},
+				{"id", callId},
 				{"method", method},
 				{"params", parameters}
 			};
