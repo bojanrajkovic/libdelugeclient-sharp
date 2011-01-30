@@ -121,19 +121,19 @@ namespace CodeRinseRepeat.Deluge
 				yield return new Torrent {
 					ConnectedPeers = (int) data[Torrent.Fields.ConnectedPeers],
 					ConnectedSeeds = (int) data[Torrent.Fields.ConnectedSeeds],
-					DistributedCopies = (double) data[Torrent.Fields.DistributedCopies],
+					DistributedCopies = Convert.ToDouble (data[Torrent.Fields.DistributedCopies]),
 					Downloaded = (int) data[Torrent.Fields.Downloaded],
-					DownloadSpeed = (double) data[Torrent.Fields.DownloadSpeed],
+					DownloadSpeed = Convert.ToDouble (data[Torrent.Fields.DownloadSpeed]),
 					ETA = (int) data[Torrent.Fields.ETA],
-					Files = GetFiles (data, hash),
+					Files = GetFiles (torrentsDict, hash),
 					Hash = hash,
 					IsAutoManaged = (bool) data[Torrent.Fields.IsAutoManaged],
-					MaxDownloadSpeed = (double) data[Torrent.Fields.MaxDownloadSpeed],
-					MaxUploadSpeed = (double) data[Torrent.Fields.MaxUploadSpeed],
+					MaxDownloadSpeed = Convert.ToDouble (data[Torrent.Fields.MaxDownloadSpeed]),
+					MaxUploadSpeed = Convert.ToDouble (data[Torrent.Fields.MaxUploadSpeed]),
 					Name = (string) data[Torrent.Fields.Name],
-					Progress = (double) data[Torrent.Fields.Progress],
+					Progress = Convert.ToDouble (data[Torrent.Fields.Progress]),
 					Queue = (int) data[Torrent.Fields.Queue],
-					Ratio = (double) data[Torrent.Fields.Ratio],
+					Ratio = Convert.ToDouble (data[Torrent.Fields.Ratio]),
 					SavePath = (string) data[Torrent.Fields.SavePath],
 					State = (State) Enum.Parse (typeof (State), (string) data[Torrent.Fields.State]),
 					TimeAdded = unixTime.AddSeconds ((double) data[Torrent.Fields.TimeAdded]),
@@ -142,7 +142,7 @@ namespace CodeRinseRepeat.Deluge
 					TotalSize = (int) data[Torrent.Fields.TotalSize],
 					TotalUploaded = (int) data[Torrent.Fields.Uploaded],
 					TrackerHost = (string) data[Torrent.Fields.TrackerHost],
-					Trackers = GetTrackers (data, hash),
+					Trackers = GetTrackers (torrentsDict, hash),
 				};
 			}
 		}
@@ -157,7 +157,7 @@ namespace CodeRinseRepeat.Deluge
 				int index = (int) file[File.Fields.Index];
 
 				int priority = (int) filePriority[index];
-				double progress = (double) fileProgress[index];
+				double progress = Convert.ToDouble (fileProgress[index]);
 
 				yield return new File {
 					Index = index,

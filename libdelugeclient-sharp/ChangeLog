@@ -1,5 +1,10 @@
 2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* DelugeClient.cs: Fix some integer to double conversion bugs,
+	and pass the right dictionary to GetFiles and GetTrackers.
+
+2011-01-30  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* File.cs:
 	* Torrent.cs:
 	* Tracker.cs:
