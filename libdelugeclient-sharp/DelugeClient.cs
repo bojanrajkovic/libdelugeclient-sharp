@@ -27,6 +27,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Hyena.Json;
 using System.Text;
 using System.IO;
@@ -61,28 +62,58 @@ namespace CodeRinseRepeat.Deluge
 				{"params", parameters}
 			};
 
+#if DEBUG
+			Console.Error.Write ("Serializing JSON-RPC call object...");
+			Stopwatch s = new Stopwatch ();
+			s.Start ();
+#endif
 			string jsonPayload = new Serializer (callObject).Serialize ();
+#if DEBUG
+			s.Stop ();
+			Console.Error.WriteLine ("done in {0}.", s.Elapsed);
+#endif
 
 			var serviceClient = new CookieClient ();
 
 			if (cookies != null) serviceClient.Cookies = cookies;
 
 #if DEBUG
-			Console.Error.WriteLine ("Making request...");
+			Console.Error.Write ("Making request...");
+			s.Reset ();
+			s.Start ();
 #endif
 
 			byte[] returnData = serviceClient.UploadData (ServiceUri, Encoding.UTF8.GetBytes (jsonPayload));
 
 #if DEBUG
-			Console.Error.WriteLine ("Request done...");
+			s.Stop ();
+			Console.Error.WriteLine ("done in {0}.", s.Elapsed);
 #endif
 
 			cookies = serviceClient.Cookies;
 
+#if DEBUG
+			s.Reset ();
+			Console.Error.Write ("Decompressing result...");
+			s.Start ();
+#endif
 			// All this because deluge always returns gzip data, despite what you send for Accept-Encoding.
 			var responseReader = new StreamReader (new GZipStream (new MemoryStream (returnData), CompressionMode.Decompress), Encoding.UTF8);
+#if DEBUG
+			s.Stop ();
+			Console.Error.WriteLine ("done in {0}.", s.Elapsed);
+#endif
 
+#if DEBUG
+			s.Reset ();
+			Console.Error.Write ("Deserializing result...");
+			s.Start ();
+#endif
 			var response = new Deserializer (responseReader).Deserialize () as Dictionary<string, object>;
+#if DEBUG
+			s.Stop ();
+			Console.Error.WriteLine ("done in {0}.", s.Elapsed);
+#endif
 
 			if ((int) response["id"] != callId)
 				throw new ApplicationException (string.Format ("Response ID and original call ID don't match. Expected {0}, received {1}.", callId, response["id"]));
@@ -121,18 +152,15 @@ namespace CodeRinseRepeat.Deluge
 		 * }
 		 */
 
-		public Torrent GetTorrentStatus (string hash, string[] fields) {
-			var result = DoServiceCall ("core.get_torrent_status", hash, fields);
+		public Torrent GetTorrentStatus (Torrent t, string[] fields) {
+			var result = DoServiceCall ("core.get_torrent_status", t.Hash, fields);
 			var torrentObject = (JsonObject) result["result"];
 
-			yield return new Torrent {
-				Hash = hash,
-
-			};
+			return t;
 		}
 
-		public Torrent GetTorrentStatus (string hash) {
-			return GetTorrentStatus ("core.get_torrent_status", hash, null);
+		public Torrent GetTorrentStatus (Torrent t) {
+			return GetTorrentStatus (t, new string[] {});
 		}
 
 		public void RescanPlugins () {
