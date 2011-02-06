@@ -136,7 +136,7 @@ namespace CodeRinseRepeat.Deluge
 		public int ConnectedPeers { get; internal set; }
 		public double Ratio { get; internal set; }
 		public int TotalPeers { get; internal set; }
-		public int TotalSize { get; internal set; }
+		public long TotalSize { get; internal set; }
 		public State State { get; internal set; }
 		public double MaxUploadSpeed { get; internal set; }
 		public int ETA { get; internal set; }
@@ -144,9 +144,9 @@ namespace CodeRinseRepeat.Deluge
 		public double Progress { get; internal set; }
 		public DateTime TimeAdded { get; internal set; }
 		public string TrackerHost { get; internal set; }
-		public int TotalUploaded { get; internal set; }
+		public long TotalUploaded { get; internal set; }
 		public IEnumerable<File> Files { get; internal set; }
-		public int Downloaded { get; internal set; }
+		public long Downloaded { get; internal set; }
 		public int TotalSeeds { get; internal set; }
 		public int ConnectedSeeds { get; internal set; }
 		public string Name { get; internal set; }
@@ -154,6 +154,31 @@ namespace CodeRinseRepeat.Deluge
 		public bool IsAutoManaged { get; internal set; }
 		public int Queue { get; internal set; }
 		public double DistributedCopies { get; internal set; }
+		public string Comment { get; internal set; }
+		public TimeSpan ActiveTime { get; internal set; }
+		public bool Seeding { get; internal set; }
+		public double UploadSpeed { get; internal set; }
+		public bool Private { get; internal set; }
+		public int TotalPayloadUpload { get; internal set; }
+		public bool Paused { get; internal set; }
+		public int SeedRank { get; internal set; }
+		public TimeSpan SeedingTime { get; internal set; }
+		public int MaxUploadSlots { get; internal set; }
+		public bool PrioritizeFirstLast { get; internal set; }
+		public string Message { get; internal set; }
+		public int MaxConnections { get; internal set; }
+		public bool Compact { get; internal set; }
+		public int TotalWanted { get; internal set; }
+		public bool RemoveAtRatio { get; internal set; }
+		public Tracker Tracker { get; internal set; }
+		public int Pieces { get; internal set; }
+		public string TrackerStatus { get; internal set; }
+		public bool MoveOnCompleted { get; internal set; }
+		public DateTime NextAnnounce { get; internal set; }
+		public bool StopAtRatio { get; internal set; }
+		public int PieceSize { get; internal set; }
+
+
 	}
 }
 

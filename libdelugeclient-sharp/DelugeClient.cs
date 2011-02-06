@@ -40,7 +40,7 @@ namespace CodeRinseRepeat.Deluge
 	public class DelugeClient
 	{
 		public Uri ServiceUri { get; private set; }
-		private int callId;
+		private long callId;
 		private CookieContainer cookies;
 
 		private static readonly DateTime unixTime = new DateTime (1970, 1, 1, 0, 0, 0, 0);
@@ -98,7 +98,7 @@ namespace CodeRinseRepeat.Deluge
 			s.Start ();
 #endif
 			// All this because deluge always returns gzip data, despite what you send for Accept-Encoding.
-			var responseReader = new StreamReader (new GZipStream (new MemoryStream (returnData), CompressionMode.Decompress), Encoding.UTF8);
+			var responseJson = new StreamReader (new GZipStream (new MemoryStream (returnData), CompressionMode.Decompress), Encoding.UTF8).ReadToEnd ();
 #if DEBUG
 			s.Stop ();
 			Console.Error.WriteLine ("done in {0}.", s.Elapsed);
@@ -109,13 +109,13 @@ namespace CodeRinseRepeat.Deluge
 			Console.Error.Write ("Deserializing result...");
 			s.Start ();
 #endif
-			var response = new Deserializer (responseReader).Deserialize () as Dictionary<string, object>;
+			var response = new Deserializer (responseJson).Deserialize () as Dictionary<string, object>;
 #if DEBUG
 			s.Stop ();
 			Console.Error.WriteLine ("done in {0}.", s.Elapsed);
 #endif
 
-			if ((int) response["id"] != callId)
+			if ((long) response["id"] != callId)
 				throw new ApplicationException (string.Format ("Response ID and original call ID don't match. Expected {0}, received {1}.", callId, response["id"]));
 
 			if (response["error"] != null)
@@ -194,36 +194,42 @@ namespace CodeRinseRepeat.Deluge
 			var result = DoServiceCall ("core.get_torrents_status", new Dictionary<string, string> (), fields);
 			var torrentsDict = (Dictionary<string, object>) result["result"];
 
+			var torrents = new List<Torrent> ();
+
 			foreach (var hash in torrentsDict.Keys) {
 				JsonObject data = (JsonObject) torrentsDict[hash];
 
-				yield return new Torrent {
-					ConnectedPeers = (int) data[Torrent.Fields.ConnectedPeers],
-					ConnectedSeeds = (int) data[Torrent.Fields.ConnectedSeeds],
-					DistributedCopies = Convert.ToDouble (data[Torrent.Fields.DistributedCopies]),
-					Downloaded = (int) data[Torrent.Fields.Downloaded],
-					DownloadSpeed = Convert.ToDouble (data[Torrent.Fields.DownloadSpeed]),
-					ETA = (int) data[Torrent.Fields.ETA],
-					Files = GetFiles (torrentsDict, hash),
-					Hash = hash,
-					IsAutoManaged = (bool) data[Torrent.Fields.IsAutoManaged],
-					MaxDownloadSpeed = Convert.ToDouble (data[Torrent.Fields.MaxDownloadSpeed]),
-					MaxUploadSpeed = Convert.ToDouble (data[Torrent.Fields.MaxUploadSpeed]),
-					Name = (string) data[Torrent.Fields.Name],
-					Progress = Convert.ToDouble (data[Torrent.Fields.Progress]),
-					Queue = (int) data[Torrent.Fields.Queue],
-					Ratio = Convert.ToDouble (data[Torrent.Fields.Ratio]),
-					SavePath = (string) data[Torrent.Fields.SavePath],
-					State = (State) Enum.Parse (typeof (State), (string) data[Torrent.Fields.State]),
-					TimeAdded = unixTime.AddSeconds (Convert.ToDouble (data[Torrent.Fields.TimeAdded])),
-					TotalPeers = (int) data[Torrent.Fields.TotalPeers],
-					TotalSeeds = (int) data[Torrent.Fields.TotalSeeds],
-					TotalSize = (int) data[Torrent.Fields.TotalSize],
-					TotalUploaded = (int) data[Torrent.Fields.Uploaded],
-					TrackerHost = (string) data[Torrent.Fields.TrackerHost],
-					Trackers = GetTrackers (torrentsDict, hash),
-				};
+				unchecked {
+					torrents.Add (new Torrent {
+						ConnectedPeers = Convert.ToInt32 (data[Torrent.Fields.ConnectedPeers]),
+						ConnectedSeeds = Convert.ToInt32 (data[Torrent.Fields.ConnectedSeeds]),
+						DistributedCopies = Convert.ToDouble (data[Torrent.Fields.DistributedCopies]),
+						Downloaded = (long) data[Torrent.Fields.Downloaded],
+						DownloadSpeed = Convert.ToDouble (data[Torrent.Fields.DownloadSpeed]),
+						ETA = Convert.ToInt32 (data[Torrent.Fields.ETA]),
+						Files = GetFiles (torrentsDict, hash),
+						Hash = hash,
+						IsAutoManaged = (bool) data[Torrent.Fields.IsAutoManaged],
+						MaxDownloadSpeed = Convert.ToDouble (data[Torrent.Fields.MaxDownloadSpeed]),
+						MaxUploadSpeed = Convert.ToDouble (data[Torrent.Fields.MaxUploadSpeed]),
+						Name = (string) data[Torrent.Fields.Name],
+						Progress = Convert.ToDouble (data[Torrent.Fields.Progress]),
+						Queue = Convert.ToInt32 (data[Torrent.Fields.Queue]),
+						Ratio = Convert.ToDouble (data[Torrent.Fields.Ratio]),
+						SavePath = (string) data[Torrent.Fields.SavePath],
+						State = (State) Enum.Parse (typeof (State), (string) data[Torrent.Fields.State]),
+						TimeAdded = unixTime.AddSeconds (Convert.ToDouble (data[Torrent.Fields.TimeAdded])),
+						TotalPeers = Convert.ToInt32 (data[Torrent.Fields.TotalPeers]),
+						TotalSeeds = Convert.ToInt32 (data[Torrent.Fields.TotalSeeds]),
+						TotalSize = Convert.ToUInt32 (data[Torrent.Fields.TotalSize]),
+						TotalUploaded = (long) data[Torrent.Fields.Uploaded],
+						TrackerHost = (string) data[Torrent.Fields.TrackerHost],
+						Trackers = GetTrackers (torrentsDict, hash),
+					});
+				}
 			}
+
+			return torrents;
 		}
 
 		public void GetTorrentsAsync (Action<IEnumerable<Torrent>> callback) {
@@ -246,18 +252,18 @@ namespace CodeRinseRepeat.Deluge
 			JsonArray filePriority = (JsonArray) torrentData[Torrent.Fields.FilePriorities];
 
 			foreach (JsonObject file in files) {
-				int index = (int) file[File.Fields.Index];
+				int index = (int)((long) file[File.Fields.Index]);
 
-				int priority = (int) filePriority[index];
+				long priority = (long) filePriority[index];
 				double progress = Convert.ToDouble (fileProgress[index]);
 
 				yield return new File {
 					Index = index,
-					Offset = (int) file[File.Fields.Offset],
+					Offset = (long) file[File.Fields.Offset],
 					Path = (string) file[File.Fields.Path],
 					Priority = priority,
 					Progress = progress,
-					Size = (int) file[File.Fields.Size],
+					Size = (long) file[File.Fields.Size],
 				};
 			}
 		}
@@ -269,7 +275,7 @@ namespace CodeRinseRepeat.Deluge
 			foreach (JsonObject tracker in trackers) {
 				yield return new Tracker {
 					Url = (string) tracker[Tracker.Fields.Url],
-					Tier = (int) tracker[Tracker.Fields.Tier],
+					Tier = (long) tracker[Tracker.Fields.Tier],
 				};
 			}
 		}

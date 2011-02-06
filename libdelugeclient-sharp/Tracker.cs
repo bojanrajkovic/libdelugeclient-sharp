@@ -40,7 +40,7 @@ namespace CodeRinseRepeat.Deluge
 		}
 
 		public string Url { get; internal set; }
-		public int Tier { get; internal set; }
+		public long Tier { get; internal set; }
 	}
 }
 

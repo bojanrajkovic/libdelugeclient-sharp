@@ -41,13 +41,13 @@ namespace CodeRinseRepeat.Deluge
 			return string.Format ("[File: Index={0}, Path={1}, Offset={2}, Size={3}, Priority={4}, Progress={5}]", Index, Path, Offset, Size, Priority, Progress);
 		}
 
-		public int Index { get; internal set; }
+		public long Index { get; internal set; }
 		public string Path { get; internal set; }
-		public int Offset { get; internal set; }
-		public int Size { get; internal set; }
+		public long Offset { get; internal set; }
+		public long Size { get; internal set; }
 
 		// TODO: Turn this into a proper enum.
-		public int Priority { get; internal set; }
+		public long Priority { get; internal set; }
 
 		public double Progress { get; internal set; }
 	}

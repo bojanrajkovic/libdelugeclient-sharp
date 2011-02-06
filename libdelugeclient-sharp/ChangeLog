@@ -1,5 +1,12 @@
 2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* File.cs:
+	* Tracker.cs:
+	* Torrent.cs:
+	* DelugeClient.cs: Use longs across the board.
+
+2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* DelugeClient.cs: Add some elapsed time monitoring, ifdef'd
 	in DEBUG. Also fix the implementation of GetTorrentStatus to
 	pass new string[] instead of null.
