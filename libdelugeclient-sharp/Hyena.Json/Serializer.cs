@@ -78,6 +78,10 @@ namespace Hyena.Json
 			return val.ToString ();
 		}
 
+		private string SerializeLong (long val) {
+			return val.ToString ();
+		}
+
 		private string SerializeDouble (double val) {
 			return val.ToString (System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 		}
@@ -117,6 +121,10 @@ namespace Hyena.Json
 			int? i = unknownObj as int?;
 			if (i.HasValue)
 				return SerializeInt (i.Value);
+
+			long? l = unknownObj as long?;
+			if (l.HasValue)
+				return SerializeLong (l.Value);
 
 			double? d = unknownObj as double?;
 			if (d.HasValue)

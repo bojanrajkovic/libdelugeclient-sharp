@@ -179,12 +179,12 @@ namespace Hyena.Json
 			return buffer.ToString ();
 		}
 
-		private int LexInt () {
+		private long LexInt () {
 			return LexInt (false, 0);
 		}
 
-		private int LexInt (bool hex, int maxDigits) {
-			int value = 0;
+		private long LexInt (bool hex, int maxDigits) {
+			long value = 0;
 			int count = 0;
 
 			do {
@@ -227,7 +227,7 @@ namespace Hyena.Json
 
 		private object LexNumber (out bool isDouble) {
 			isDouble = false;
-			int  intVal = 0;
+			long intVal = 0;
 			double doubleVal = 0.0;
 			bool negate = peek == '-';
 			if (negate) {

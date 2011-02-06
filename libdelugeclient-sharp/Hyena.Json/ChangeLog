@@ -1,5 +1,11 @@
 2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* Tokenizer.cs:
+	* Serializer.cs: Support longs in the serializer, and return
+	longs by default from the tokenizer.
+
+2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* Token.cs:
 	* JsonArray.cs:
 	* Tokenizer.cs:
