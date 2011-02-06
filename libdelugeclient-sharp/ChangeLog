@@ -1,5 +1,9 @@
 2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* DelugeClient.cs: Implement GetTorrentStatus.
+
+2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* Torrent.cs: Fix up some fields, implement Equals and
 	GetHashCode, and re-implement ToString.
 
