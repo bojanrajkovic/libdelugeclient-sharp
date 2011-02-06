@@ -117,18 +117,47 @@ namespace CodeRinseRepeat.Deluge
 			};
 		}
 
+		public override bool Equals (object obj) {
+			if (obj == null)
+				return false;
+			if (ReferenceEquals (this, obj))
+				return true;
+			if (obj.GetType () != typeof(Torrent))
+				return false;
+			Torrent other = (Torrent) obj;
+			return Hash == other.Hash;
+		}
+
+
+		public override int GetHashCode () {
+			unchecked {
+				return Hash.GetHashCode ();
+			}
+		}
+
 		public override string ToString () {
-			return string.Format ("[Torrent: MaxDownloadSpeed={0}, DownloadSpeed={1}, ConnectedPeers={2}, Ratio={3}," +
-				"TotalPeers={4}, TotalSize={5}, State={6}, MaxUploadSpeed={7}, ETA={8}, SavePath={9}, Progress={10}," +
-				"TimeAdded={11}, TrackerHost={12}, TotalUploaded={13}, Files=[{14}], Downloaded={15}, TotalSeeds={16}," +
-				"ConnectedSeeds={17}, Name={18}, Trackers=[{19}], IsAutoManaged={20}, Queue={21}, DistributedCopies={22}]",
-				MaxDownloadSpeed, DownloadSpeed, ConnectedPeers, Ratio, TotalPeers, TotalSize, State, MaxUploadSpeed, ETA,
-				SavePath, Progress, TimeAdded, TrackerHost, TotalUploaded,
-				string.Join (",", Files.Select (f => f.ToString ())), Downloaded, TotalSeeds, ConnectedSeeds,
-				Name, string.Join (",", Trackers.Select (t => t.ToString ())), IsAutoManaged, Queue,
-				DistributedCopies
+			return string.Format ("[Torrent: Hash={0}, MaxDownloadSpeed={1}, DownloadSpeed={2}, ConnectedPeers={3}, Ratio={4}," +
+				"TotalPeers={5}, TotalSize={6}, State={7}, MaxUploadSpeed={8}, ETA={9}, SavePath={10}, Progress={11}," +
+				"TimeAdded={12}, TrackerHost={13}, TotalUploaded={14}, Files={15}, Downloaded={16}, TotalSeeds={17}," +
+				"ConnectedSeeds={18}, Name={19}, Trackers={20}, IsAutoManaged={21}, Queue={22}, DistributedCopies={23}," +
+				"Comment={24}, ActiveTime={25}, Seeding={26}, UploadSpeed={27}, Private={28}, TotalPayloadUpload={29}," +
+				"Paused={30}, SeedRank={31}, SeedingTime={32}, MaxUploadSlots={33}, PrioritizeFirstLast={34}, Message={35}," +
+				"MaxConnections={36}, Compact={37}, TotalWanted={38}, RemoveAtRatio={39}, Tracker={40}, Pieces={41}," +
+				"TrackerStatus={42}, MoveOnCompleted={43}, NextAnnounce={44}, StopAtRatio={45}, PieceSize={46}," +
+				"AllTimeDownload={47}, MoveOnCompletedPath={48}, Peers={49}, TotalPayloadDownload={50}, StopRatio={51}," +
+				"Finished={52}]",
+				Hash, MaxDownloadSpeed, DownloadSpeed, ConnectedPeers, Ratio, TotalPeers, TotalSize, State, MaxUploadSpeed,
+				ETA, SavePath, Progress, TimeAdded, TrackerHost, TotalUploaded, string.Join (",", Files ?? new File[0]),
+				Downloaded, TotalSeeds, ConnectedSeeds, Name, string.Join (",", Trackers ?? new Tracker[0]), IsAutoManaged,
+				Queue, DistributedCopies, Comment, ActiveTime, Seeding, UploadSpeed, Private, TotalPayloadUpload, Paused,
+				SeedRank, SeedingTime, MaxUploadSlots, PrioritizeFirstLast, Message, MaxConnections, Compact, TotalWanted,
+				RemoveAtRatio, Tracker, Pieces, TrackerStatus, MoveOnCompleted, NextAnnounce, StopAtRatio, PieceSize,
+				AllTimeDownload, MoveOnCompletedPath, string.Join (",", Peers ?? new Peer[0]), TotalPayloadDownload, StopRatio,
+				Finished
 			);
 		}
+
+
 
 		public string Hash { get; internal set; }
 		public double MaxDownloadSpeed { get; internal set; }
@@ -139,7 +168,7 @@ namespace CodeRinseRepeat.Deluge
 		public long TotalSize { get; internal set; }
 		public State State { get; internal set; }
 		public double MaxUploadSpeed { get; internal set; }
-		public int ETA { get; internal set; }
+		public DateTime ETA { get; internal set; }
 		public string SavePath { get; internal set; }
 		public double Progress { get; internal set; }
 		public DateTime TimeAdded { get; internal set; }
@@ -168,15 +197,15 @@ namespace CodeRinseRepeat.Deluge
 		public string Message { get; internal set; }
 		public int MaxConnections { get; internal set; }
 		public bool Compact { get; internal set; }
-		public int TotalWanted { get; internal set; }
+		public long TotalWanted { get; internal set; }
 		public bool RemoveAtRatio { get; internal set; }
 		public Tracker Tracker { get; internal set; }
 		public int Pieces { get; internal set; }
 		public string TrackerStatus { get; internal set; }
 		public bool MoveOnCompleted { get; internal set; }
-		public DateTime NextAnnounce { get; internal set; }
+		public TimeSpan NextAnnounce { get; internal set; }
 		public bool StopAtRatio { get; internal set; }
-		public int PieceSize { get; internal set; }
+		public long PieceSize { get; internal set; }
 		public long AllTimeDownload { get; internal set; }
 		public string MoveOnCompletedPath { get; internal set; }
 		public IEnumerable<Peer> Peers { get; internal set; }
