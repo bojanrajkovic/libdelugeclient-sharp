@@ -1,3 +1,8 @@
+2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
+	* Torrent.cs: Add new fields from GetTorrentStatus. Still need
+	to add properties on the Torrent object to match these fields.
+
 2011-02-05  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
 	* DelugeClient.cs: Implement some more methods, remove a few

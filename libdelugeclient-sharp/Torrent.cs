@@ -63,15 +63,54 @@ namespace CodeRinseRepeat.Deluge
 			public const string IsAutoManaged = "is_auto_managed";
 			public const string TimeAdded = "time_added";
 			public const string TrackerHost = "tracker_host";
+			public const string Comment = "comment";
+			public const string ActiveTime = "active_time";
+			public const string Seeding = "is_seed";
+			public const string Private = "private";
+			public const string TotalPayloadUpload = "total_payload_upload";
+			public const string Paused = "paused";
+			public const string SeedRank = "seed_rank";
+			public const string SeedingTime = "seeding_time";
+			public const string MaxUploadSlots = "max_upload_slots";
+			public const string PrioritizeFirstLast = "prioritize_first_last";
+			public const string Message = "message";
+			public const string MaxConnections = "max_connections";
+			public const string Compact = "compact";
+			public const string TotalWanted = "total_wanted";
+			public const string RemoveAtRatio = "remove_at_ratio";
+			public const string Tracker = "tracker";
+			public const string Pieces = "num_pieces";
+			public const string TrackerStatus = "tracker_status";
+			public const string MoveOnCompleted = "move_on_completed";
+			public const string NextAnnounce = "next_announce";
+			public const string StopAtRatio = "stop_at_ratio";
+			public const string PieceSize = "piece_length";
+			public const string AllTimeDownloaded = "all_time_download";
+			public const string MoveOnCompletedPath = "move_on_completed_path";
+			public const string Peers = "peers";
+			public const string FileCount = "num_files";
+			public const string StopRatio = "stop_ratio";
+			public const string IsFinished = "is_finished";
 
-			public static readonly string[] All = new string[] {
+
+			public static readonly string[] All = new [] {
 				Name, State, SavePath, MaxDownloadSpeed, MaxUploadSpeed, DownloadSpeed, UploadSpeed, ConnectedSeeds,
 				TotalSeeds, ConnectedPeers, TotalPeers, ETA, Downloaded, Uploaded, TotalSize, Progress, Label, Trackers,
 				Files, Index, Path, Size, FileProgress, FilePriorities, Queue, Ratio, DistributedCopies, IsAutoManaged,
-				TimeAdded, TrackerHost
+				TimeAdded, TrackerHost, DownloadSpeed,
 			};
 
-			public static readonly string[] WebUIDefaults = new string[] {
+			public static readonly string[] GetTorrentStatusFields = new [] {
+				Comment, ActiveTime, Seeding, UploadSpeed, Private, TotalPayloadUpload, Paused, SeedRank, SeedingTime,
+				MaxUploadSlots, PrioritizeFirstLast, DistributedCopies, Message, ConnectedPeers, MaxDownloadSpeed, MaxConnections,
+				Compact, Ratio, TotalPeers, TotalSize, TotalWanted, State, FilePriorities, MaxUploadSpeed, RemoveAtRatio,
+				Tracker, SavePath, Progress, TimeAdded, TrackerHost, Uploaded, Files, Downloaded, Pieces, TrackerStatus,
+				TotalSeeds, MoveOnCompleted, NextAnnounce, StopAtRatio, FileProgress, PieceSize, AllTimeDownloaded,
+				MoveOnCompletedPath, ConnectedSeeds, Peers, Name, Trackers, IsAutoManaged, Queue, FileCount, ETA, StopRatio,
+				IsFinished
+			};
+
+			public static readonly string[] WebUIDefaults = new [] {
 				Queue, Name, TotalSize, State, Progress, ConnectedSeeds, TotalSeeds, ConnectedPeers, TotalPeers,
 				DownloadSpeed, UploadSpeed, ETA, Ratio, DistributedCopies, IsAutoManaged, TimeAdded, TrackerHost, SavePath,
 				Label
