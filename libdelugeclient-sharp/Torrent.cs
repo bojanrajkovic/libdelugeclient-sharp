@@ -91,7 +91,7 @@ namespace CodeRinseRepeat.Deluge
 			public const string FileCount = "num_files";
 			public const string StopRatio = "stop_ratio";
 			public const string IsFinished = "is_finished";
-
+			public const string TotalPayloadDownload = "total_payload_download";
 
 			public static readonly string[] All = new [] {
 				Name, State, SavePath, MaxDownloadSpeed, MaxUploadSpeed, DownloadSpeed, UploadSpeed, ConnectedSeeds,
@@ -159,7 +159,7 @@ namespace CodeRinseRepeat.Deluge
 		public bool Seeding { get; internal set; }
 		public double UploadSpeed { get; internal set; }
 		public bool Private { get; internal set; }
-		public int TotalPayloadUpload { get; internal set; }
+		public long TotalPayloadUpload { get; internal set; }
 		public bool Paused { get; internal set; }
 		public int SeedRank { get; internal set; }
 		public TimeSpan SeedingTime { get; internal set; }
@@ -177,8 +177,12 @@ namespace CodeRinseRepeat.Deluge
 		public DateTime NextAnnounce { get; internal set; }
 		public bool StopAtRatio { get; internal set; }
 		public int PieceSize { get; internal set; }
-
-
+		public long AllTimeDownload { get; internal set; }
+		public string MoveOnCompletedPath { get; internal set; }
+		public IEnumerable<Peer> Peers { get; internal set; }
+		public long TotalPayloadDownload { get; internal set; }
+		public double StopRatio { get; internal set; }
+		public bool Finished { get; internal set; }
 	}
 }
 

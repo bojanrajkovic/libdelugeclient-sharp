@@ -52,6 +52,7 @@
     <Compile Include="State.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Tracker.cs" />
+    <Compile Include="Peer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

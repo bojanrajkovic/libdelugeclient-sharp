@@ -1,5 +1,12 @@
 2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* Peer.cs:
+	* Torrent.cs:
+	* libdelugeclient-sharp.csproj: Finish adding fields to
+	Torrent, and add Peer class.
+
+2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* File.cs:
 	* Tracker.cs:
 	* Torrent.cs:
