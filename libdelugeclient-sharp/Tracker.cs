@@ -39,6 +39,25 @@ namespace CodeRinseRepeat.Deluge
 			return string.Format ("[Tracker: Url={0}, Tier={1}]", Url, Tier);
 		}
 
+		public override bool Equals (object obj) {
+			if (obj == null)
+				return false;
+			if (ReferenceEquals (this, obj))
+				return true;
+			if (obj.GetType () != typeof (Tracker))
+				return false;
+			Tracker other = (Tracker) obj;
+			return Url == other.Url;
+		}
+
+
+		public override int GetHashCode () {
+			unchecked {
+				return Url.GetHashCode ();
+			}
+		}
+
+
 		public string Url { get; internal set; }
 		public long Tier { get; internal set; }
 	}
