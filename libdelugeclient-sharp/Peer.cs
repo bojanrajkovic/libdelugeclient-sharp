@@ -1,11 +1,11 @@
-// 
+//
 // Peer.cs
-//  
+//
 // Author:
 //       Bojan Rajkovic <brajkovic@coderinserepeat.com>
-// 
+//
 // Copyright (c) 2011 Bojan Rajkovic
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -31,6 +31,45 @@ namespace CodeRinseRepeat.Deluge
 	{
 		public static class Fields
 		{
+			public const string DownloadSpeed = "down_speed";
+			public const string IP = "ip";
+			public const string UploadSpeed = "up_speed";
+			public const string Client = "client";
+			public const string Country = "country";
+			public const string Progress = "progress";
+			public const string Seed = "seed";
+		}
+
+		public double DownloadSpeed { get; internal set; }
+		public string IP { get; internal set; }
+		public double UploadSpeed { get; internal set; }
+		public string Client { get; internal set; }
+		public string Country { get; internal set; }
+		public double Progress { get; internal set; }
+		public int Seed { get; internal set; }
+
+		public override string ToString () {
+			return string.Format ("[Peer: DownloadSpeed={0}, IP={1}, UploadSpeed={2}, Client={3}, Country={4}, Progress={5}," +
+				"Seed={6}]", DownloadSpeed, IP, UploadSpeed, Client, Country, Progress, Seed
+			);
+		}
+
+		public override bool Equals (object obj) {
+			if (obj == null)
+				return false;
+			if (ReferenceEquals (this, obj))
+				return true;
+			if (obj.GetType () != typeof(Peer))
+				return false;
+			Peer other = (Peer) obj;
+			return IP == other.IP;
+		}
+
+
+		public override int GetHashCode () {
+			unchecked {
+				return IP.GetHashCode ();
+			}
 		}
 	}
 }

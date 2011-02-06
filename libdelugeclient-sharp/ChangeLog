@@ -1,5 +1,9 @@
 2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* Peer.cs: Implement Equals and GetHashCode, and add fields.
+
+2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* Peer.cs:
 	* Torrent.cs:
 	* libdelugeclient-sharp.csproj: Finish adding fields to
