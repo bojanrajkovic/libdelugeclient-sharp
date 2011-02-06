@@ -25,92 +25,89 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 
 namespace Hyena.Json
 {
-    internal class Token
-    {
-        public Token (TokenType type) : this (type, null)
-        {
-        }
+	internal class Token
+	{
+		public Token (TokenType type) : this (type, null)		{
+		}
 
-        public Token (TokenType type, object value)
-        {
-            this.type = type;
-            this.value = value;
-        }
+		public Token (TokenType type,object value)		{
+			this.type = type;
+			this.value = value;
+		}
 
-        private TokenType type;
-        public TokenType Type {
-            get { return type; }
-        }
+		private TokenType type;
 
-        private object value;
-        public object Value {
-            get { return value; }
-            set { this.value = value; }
-        }
+		public TokenType Type {
+			get { return type; }
+		}
 
-        private int source_line;
-        public int SourceLine {
-            get { return source_line; }
-            internal set { source_line = value; }
-        }
+		private object value;
 
-        private int source_column;
-        public int SourceColumn {
-            get { return source_column; }
-            internal set { source_column = value; }
-        }
+		public object Value {
+			get { return value; }
+			set { this.value = value; }
+		}
 
-        internal static Token ObjectStart {
-            get { return new Token (TokenType.ObjectStart); }
-        }
+		private int source_line;
 
-        internal static Token ObjectFinish {
-            get { return new Token (TokenType.ObjectFinish); }
-        }
+		public int SourceLine {
+			get { return source_line; }
+			internal set { source_line = value; }
+		}
 
-        internal static Token ArrayStart {
-            get { return new Token (TokenType.ArrayStart); }
-        }
+		private int source_column;
 
-        internal static Token ArrayFinish {
-            get { return new Token (TokenType.ArrayFinish); }
-        }
+		public int SourceColumn {
+			get { return source_column; }
+			internal set { source_column = value; }
+		}
 
-        internal static Token Null {
-            get { return new Token (TokenType.Null); }
-        }
+		internal static Token ObjectStart {
+			get { return new Token (TokenType.ObjectStart); }
+		}
 
-        internal static Token Comma {
-            get { return new Token (TokenType.Comma); }
-        }
+		internal static Token ObjectFinish {
+			get { return new Token (TokenType.ObjectFinish); }
+		}
 
-        internal static Token Colon {
-            get { return new Token (TokenType.Colon); }
-        }
+		internal static Token ArrayStart {
+			get { return new Token (TokenType.ArrayStart); }
+		}
 
-        internal static Token Number (double value)
-        {
-            return new Token (TokenType.Number, value);
-        }
+		internal static Token ArrayFinish {
+			get { return new Token (TokenType.ArrayFinish); }
+		}
 
-        internal static Token Integer (int value)
-        {
-            return new Token (TokenType.Integer, value);
-        }
+		internal static Token Null {
+			get { return new Token (TokenType.Null); }
+		}
 
-        internal static Token String (string value)
-        {
-            return new Token (TokenType.String, value);
-        }
+		internal static Token Comma {
+			get { return new Token (TokenType.Comma); }
+		}
 
-        internal static Token Bool (bool value)
-        {
-            return new Token (TokenType.Boolean, value);
-        }
-    }
+		internal static Token Colon {
+			get { return new Token (TokenType.Colon); }
+		}
+
+		internal static Token Number (double value) {
+			return new Token (TokenType.Number, value);
+		}
+
+		internal static Token Integer (int value) {
+			return new Token (TokenType.Integer, value);
+		}
+
+		internal static Token String (string value) {
+			return new Token (TokenType.String, value);
+		}
+
+		internal static Token Bool (bool value) {
+			return new Token (TokenType.Boolean, value);
+		}
+	}
 }

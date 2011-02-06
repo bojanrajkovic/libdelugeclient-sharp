@@ -25,28 +25,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 
 namespace Hyena.Json
 {
-    [Flags]
-    internal enum TokenType
-    {
-        None = 0 << 0,
-        ObjectStart = 1 << 0,
-        ObjectFinish = 1 << 1,
-        ArrayStart = 1 << 2,
-        ArrayFinish = 1 << 3,
-        Boolean = 1 << 4,
-        String = 1 << 5,
-        Null = 1 << 6,
-        Number = 1 << 7,
-        Integer = 1 << 8,
-        Comma = 1 << 9,
-        Colon = 1 << 10,
+		[Flags]
+	internal enum TokenType {
+		None = 0 << 0,
+		ObjectStart = 1 << 0,
+		ObjectFinish = 1 << 1,
+		ArrayStart = 1 << 2,
+		ArrayFinish = 1 << 3,
+		Boolean = 1 << 4,
+		String = 1 << 5,
+		Null = 1 << 6,
+		Number = 1 << 7,
+		Integer = 1 << 8,
+		Comma = 1 << 9,
+		Colon = 1 << 10,
 
-        Literal = String | Number | Boolean | Null | Integer,
-        Value = ObjectStart | ArrayStart | Literal
-    }
+		Literal = String | Number | Boolean | Null | Integer,
+		Value = ObjectStart | ArrayStart | Literal
+	}
 }

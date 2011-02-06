@@ -1,3 +1,17 @@
+2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
+	* Token.cs:
+	* JsonArray.cs:
+	* Tokenizer.cs:
+	* TokenType.cs:
+	* Serializer.cs:
+	* JsonObject.cs:
+	* Deserializer.cs:
+	* IJsonCollection.cs: Match formatting with rest of project,
+	and update Serializer to use the new String.Join (string,
+	IEnumerable<T>) introduced in .NET 4.0, as well as make it
+	able to serialize to a stream.
+
 2011-01-29  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
 	* Token.cs:

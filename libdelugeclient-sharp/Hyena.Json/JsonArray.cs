@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -33,21 +32,18 @@ using System.Text;
 
 namespace Hyena.Json
 {
-    public class JsonArray : List<object>, IJsonCollection
-    {
-        public void Dump ()
-        {
-            Dump (1);
-        }
+	public class JsonArray : List<object>, IJsonCollection
+	{
+		public void Dump () {
+			Dump (1);
+		}
 
-        public void Dump (int level)
-        {
-            Console.Write (ToString ());
-        }
+		public void Dump (int level) {
+			Console.Write (ToString ());
+		}
 
-        public override string ToString ()
-        {
-            return new Serializer (this).Serialize ();
-        }
-    }
+		public override string ToString () {
+			return new Serializer (this).Serialize ();
+		}
+	}
 }

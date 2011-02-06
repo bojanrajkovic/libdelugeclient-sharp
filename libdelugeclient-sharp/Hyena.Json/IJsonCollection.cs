@@ -25,16 +25,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.Collections;
 using System.Text;
 
 namespace Hyena.Json
 {
-    public interface IJsonCollection : ICollection
-    {
-        void Dump ();
-        void Dump (int count);
-    }
+	public interface IJsonCollection : ICollection
+	{
+		void Dump ();
+
+		void Dump (int count);
+	}
 }

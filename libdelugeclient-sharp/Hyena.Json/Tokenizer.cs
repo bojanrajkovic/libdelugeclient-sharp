@@ -25,305 +25,330 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.IO;
 using System.Text;
 
 namespace Hyena.Json
 {
-    internal class Tokenizer
-    {
-        private StreamReader reader;
-        private StringBuilder string_buffer;
+	internal class Tokenizer
+	{
+		private StreamReader reader;
+		private StringBuilder string_buffer;
+		private char peek = ' ';
+		private int current_line = 1;
+		private int current_column = 1;
+		private int token_start_line;
+		private int token_start_column;
 
-        private char peek = ' ';
-        private int current_line = 1;
-        private int current_column = 1;
-        private int token_start_line;
-        private int token_start_column;
+		public Tokenizer ()
+		{
+			Reset ();
+		}
 
-        public Tokenizer () { Reset (); }
-        public Tokenizer (string input) { SetInput (input); }
-        public Tokenizer (Stream stream) { SetInput (stream); }
-        public Tokenizer (StreamReader reader) { SetInput (reader); }
+		public Tokenizer (string input)
+		{
+			SetInput (input);
+		}
 
-        private void Reset ()
-        {
-            peek = ' ';
-            current_line = 1;
-            current_column = 1;
-            token_start_line = 0;
-            token_start_column = 0;
-        }
+		public Tokenizer (Stream stream)
+		{
+			SetInput (stream);
+		}
 
-        public void SetInput (StreamReader reader)
-        {
-            this.reader = reader;
-            Reset ();
-        }
+		public Tokenizer (StreamReader reader)
+		{
+			SetInput (reader);
+		}
 
-        public void SetInput (Stream stream)
-        {
-            SetInput (new StreamReader (stream));
-        }
+		private void Reset () {
+			peek = ' ';
+			current_line = 1;
+			current_column = 1;
+			token_start_line = 0;
+			token_start_column = 0;
+		}
 
-        public void SetInput (string input)
-        {
-            SetInput (new MemoryStream (Encoding.UTF8.GetBytes (input)));
-        }
+		public void SetInput (StreamReader reader) {
+			this.reader = reader;
+			Reset ();
+		}
 
-        private void ReadChar ()
-        {
-            int val = reader.Read ();
-            peek = val == -1 ? Char.MaxValue : (char)val;
-            current_column++;
-        }
+		public void SetInput (Stream stream) {
+			SetInput (new StreamReader (stream));
+		}
 
-        private void UnexpectedCharacter (char ch)
-        {
-            throw new ApplicationException (String.Format ("Unexpected character '{0}' at [{1}:{2}]",
-                ch, current_line, current_column - 1));
-        }
+		public void SetInput (string input) {
+			SetInput (new MemoryStream (Encoding.UTF8.GetBytes (input)));
+		}
 
-        private void InvalidSyntax (string message)
-        {
-            throw new ApplicationException (String.Format ("Invalid syntax: {0} at [{1}:{2}]",
-                message, current_line, current_column));
-        }
+		private void ReadChar () {
+			int val = reader.Read ();
+			peek = val == -1 ? Char.MaxValue : (char)val;
+			current_column++;
+		}
 
-        private StringBuilder GetStringBuilder ()
-        {
-            if (string_buffer == null) {
-                string_buffer = new StringBuilder (64);
-                return string_buffer;
-            }
+		private void UnexpectedCharacter (char ch) {
+			throw new ApplicationException (String.Format ("Unexpected character '{0}' at [{1}:{2}]", 
+						ch, current_line, current_column - 1));
+		}
 
-            string_buffer.Remove (0, string_buffer.Length);
-            return string_buffer;
-        }
+		private void InvalidSyntax (string message) {
+			throw new ApplicationException (String.Format ("Invalid syntax: {0} at [{1}:{2}]", 
+						message, current_line, current_column));
+		}
 
-        private string LexString ()
-        {
-            StringBuilder buffer = GetStringBuilder ();
-            bool read = true;
+		private StringBuilder GetStringBuilder () {
+			if (string_buffer == null) {
+				string_buffer = new StringBuilder (64);
+				return string_buffer;
+			}
 
-            while (!reader.EndOfStream) {
-                if (read) {
-                    ReadChar ();
-                }
+			string_buffer.Remove (0, string_buffer.Length);
+			return string_buffer;
+		}
 
-                read = true;
+		private string LexString () {
+			StringBuilder buffer = GetStringBuilder ();
+			bool read = true;
 
-                if (peek == '\\') {
-                    ReadChar ();
-                    switch (peek) {
-                        case 'u':
-                            ReadChar ();
-                            buffer.Append ((char)LexInt (true, 4));
-                            read = false;
-                            break;
-                        case '"':
-                        case '\\':
-                        case '/': buffer.Append (peek); break;
-                        case 'b': buffer.Append ('\b'); break;
-                        case 'f': buffer.Append ('\f'); break;
-                        case 'n': buffer.Append ('\n'); break;
-                        case 'r': buffer.Append ('\r'); break;
-                        case 't': buffer.Append ('\t'); break;
-                        default:
-                            UnexpectedCharacter (peek);
-                            break;
-                    }
-                } else if (peek == '"') {
-                    ReadChar ();
-                    return buffer.ToString ();
-                } else {
-                    buffer.Append (peek);
-                }
-            }
+			while (!reader.EndOfStream) {
+				if (read) {
+					ReadChar ();
+				}
 
-            if (peek != '"') {
-                InvalidSyntax ("Unterminated string, expected '\"' termination, got '" + peek + "'");
-            } else if (!read && reader.EndOfStream) {
-                ReadChar ();
-            }
+				read = true;
 
-            return buffer.ToString ();
-        }
+				if (peek == '\\') {
+					ReadChar ();
+					switch (peek) {
+						case 'u':
+							ReadChar ();
+							buffer.Append ((char)LexInt (true, 4));
+							read = false;
+							break;
+						case '"':
+						case '\\':
+						case '/':
+							buffer.Append (peek);
+							break;
+						case 'b':
+							buffer.Append ('\b');
+							break;
+						case 'f':
+							buffer.Append ('\f');
+							break;
+						case 'n':
+							buffer.Append ('\n');
+							break;
+						case 'r':
+							buffer.Append ('\r');
+							break;
+						case 't':
+							buffer.Append ('\t');
+							break;
+						default:
+							UnexpectedCharacter (peek);
+							break;
+					}
+				} else if (peek == '"') {
+					ReadChar ();
+					return buffer.ToString ();
+				} else {
+					buffer.Append (peek);
+				}
+			}
 
-        private string LexId ()
-        {
-            StringBuilder buffer = GetStringBuilder ();
+			if (peek != '"') {
+				InvalidSyntax ("Unterminated string, expected '\"' termination, got '" + peek + "'");
+			} else if (!read && reader.EndOfStream) {
+				ReadChar ();
+			}
 
-            do {
-                buffer.Append (peek);
-                ReadChar ();
-            } while (Char.IsLetterOrDigit (peek));
+			return buffer.ToString ();
+		}
 
-            return buffer.ToString ();
-        }
+		private string LexId () {
+			StringBuilder buffer = GetStringBuilder ();
 
-        private int LexInt ()
-        {
-            return LexInt (false, 0);
-        }
+			do {
+				buffer.Append (peek);
+				ReadChar ();
+			} while (Char.IsLetterOrDigit (peek));
 
-        private int LexInt (bool hex, int maxDigits)
-        {
-            int value = 0;
-            int count = 0;
+			return buffer.ToString ();
+		}
 
-            do {
-                value = (hex ? 16 : 10) * value +  (hex
-                    ? peek >= 'A' && peek <= 'F'
-                        ? 10 + peek - 'A'
-                        : (peek >= 'a' && peek <= 'f'
-                            ? 10 + peek - 'a'
-                            : peek - '0')
-                    : peek - '0');
+		private int LexInt () {
+			return LexInt (false, 0);
+		}
 
-                if (maxDigits > 0 && ++count >= maxDigits) {
-                    ReadChar ();
-                    return value;
-                }
+		private int LexInt (bool hex, int maxDigits) {
+			int value = 0;
+			int count = 0;
 
-                ReadChar ();
-            } while (Char.IsDigit (peek) || (hex && ((peek >= 'a' && peek <= 'f') || (peek >= 'A' && peek <= 'F'))));
+			do {
+				value = (hex ? 16 : 10) * value + (hex
+					? peek >= 'A' && peek <= 'F'
+					? 10 + peek - 'A'
+					: (peek >= 'a' && peek <= 'f'
+					? 10 + peek - 'a'
+					: peek - '0')
+				: peek - '0');
 
-            return value;
-        }
+				if (maxDigits > 0 && ++count >= maxDigits) {
+					ReadChar ();
+					return value;
+				}
 
-        private double LexFraction ()
-        {
-            double fraction = 0;
-            double d = 10;
+				ReadChar ();
+			} while (Char.IsDigit (peek) || (hex && ((peek >= 'a' && peek <= 'f') || (peek >= 'A' && peek <= 'F'))));
 
-            while (true) {
-                ReadChar ();
+			return value;
+		}
 
-                if (!Char.IsDigit (peek)) {
-                    break;
-                }
+		private double LexFraction () {
+			double fraction = 0;
+			double d = 10;
 
-                fraction += (peek - '0') / d;
-                d *= 10;
-            }
+			while (true) {
+				ReadChar ();
 
-            return fraction;
-        }
+				if (!Char.IsDigit (peek)) {
+					break;
+				}
 
-        private object LexNumber (out bool isDouble)
-        {
-            isDouble = false;
-            int  intVal = 0;
-            double doubleVal = 0.0;
-            bool negate = peek == '-';
-            if (negate) {
-                ReadChar ();
-            }
+				fraction += (peek - '0') / d;
+				d *= 10;
+			}
 
-            if (peek != '0') {
-                doubleVal = intVal = LexInt ();
-            } else {
-                ReadChar ();
-            }
+			return fraction;
+		}
 
-            if (peek == '.') {
-                isDouble = true;
-                doubleVal += LexFraction ();
-            }
+		private object LexNumber (out bool isDouble) {
+			isDouble = false;
+			int  intVal = 0;
+			double doubleVal = 0.0;
+			bool negate = peek == '-';
+			if (negate) {
+				ReadChar ();
+			}
 
-            if (peek == 'e' || peek == 'E') {
-                isDouble = true;
-                ReadChar ();
-                if (peek == '-') {
-                    ReadChar ();
-                    doubleVal /= Math.Pow (10, LexInt ());
-                } else if (peek == '+') {
-                    ReadChar ();
-                    doubleVal *= Math.Pow (10, LexInt ());
-                } else if (Char.IsDigit (peek)) {
-                    doubleVal *= Math.Pow (10, LexInt ());
-                } else {
-                    InvalidSyntax ("Malformed exponent");
-                }
-            }
+			if (peek != '0') {
+				doubleVal = intVal = LexInt ();
+			} else {
+				ReadChar ();
+			}
 
-            if (Char.IsDigit (peek)) {
-                InvalidSyntax ("Numbers starting with 0 must be followed by a . or not " +
-                    "followed by a digit (octal syntax not legal)");
-            }
+			if (peek == '.') {
+				isDouble = true;
+				doubleVal += LexFraction ();
+			}
 
-            if (!isDouble)
-                return negate ? -1 * intVal : intVal;
-            else
-                return negate ? -1.0 * doubleVal : doubleVal;
-        }
+			if (peek == 'e' || peek == 'E') {
+				isDouble = true;
+				ReadChar ();
+				if (peek == '-') {
+					ReadChar ();
+					doubleVal /= Math.Pow (10, LexInt ());
+				} else if (peek == '+') {
+					ReadChar ();
+					doubleVal *= Math.Pow (10, LexInt ());
+				} else if (Char.IsDigit (peek)) {
+					doubleVal *= Math.Pow (10, LexInt ());
+				} else {
+					InvalidSyntax ("Malformed exponent");
+				}
+			}
 
-        public Token Scan ()
-        {
-            Token token = InnerScan ();
-            if (token == null) {
-                return null;
-            }
+			if (Char.IsDigit (peek)) {
+				InvalidSyntax ("Numbers starting with 0 must be followed by a . or not " +
+							"followed by a digit (octal syntax not legal)");
+			}
 
-            token.SourceLine = token_start_line;
-            token.SourceColumn = token_start_column - 1;
-            return token;
-        }
+			if (!isDouble)
+				return negate ? -1 * intVal : intVal;
+			else
+				return negate ? -1.0 * doubleVal : doubleVal;
+		}
 
-        private Token InnerScan ()
-        {
-            for (; ; ReadChar ()) {
-                if (Char.IsWhiteSpace (peek) && peek != '\n') {
-                    continue;
-                } else if (peek == '\n') {
-                    current_line++;
-                    current_column = 0;
-                } else {
-                    break;
-                }
-            }
+		public Token Scan () {
+			Token token = InnerScan ();
+			if (token == null) {
+				return null;
+			}
 
-            token_start_column = current_column;
-            token_start_line = current_line;
+			token.SourceLine = token_start_line;
+			token.SourceColumn = token_start_column - 1;
+			return token;
+		}
 
-            switch (peek) {
-                case '{': ReadChar (); return new Token (TokenType.ObjectStart);
-                case '}': ReadChar (); return new Token (TokenType.ObjectFinish);
-                case '[': ReadChar (); return new Token (TokenType.ArrayStart);
-                case ']': ReadChar (); return new Token (TokenType.ArrayFinish);
-                case ',': ReadChar (); return new Token (TokenType.Comma);
-                case ':': ReadChar (); return new Token (TokenType.Colon);
-                case '"': return new Token (TokenType.String, LexString ());
-                default:
-                    if (peek == '-' || Char.IsDigit (peek)) {
-                        bool isDouble;
-                        object num = LexNumber (out isDouble);
-                        if (!isDouble)
-                            return new Token (TokenType.Integer, num);
-                        else
-                            return new Token (TokenType.Number, num);
-                    } else if (Char.IsLetter (peek)) {
-                        string identifier = LexId ();
-                        switch (identifier) {
-                            case "true": return new Token (TokenType.Boolean, true);
-                            case "false": return new Token (TokenType.Boolean, false);
-                            case "null": return new Token (TokenType.Null);
-                            default:
-                                InvalidSyntax ("Invalid identifier '" + identifier + "'");
-                                break;
-                        }
-                    }
+		private Token InnerScan () {
+			for (;; ReadChar ()) {
+				if (Char.IsWhiteSpace (peek) && peek != '\n') {
+					continue;
+				} else if (peek == '\n') {
+					current_line++;
+					current_column = 0;
+				} else {
+					break;
+				}
+			}
 
-                    if (peek != Char.MaxValue) {
-                        UnexpectedCharacter (peek);
-                    }
-                    break;
-            }
+			token_start_column = current_column;
+			token_start_line = current_line;
 
-            return null;
-        }
-    }
+			switch (peek) {
+				case '{':
+					ReadChar ();
+					return new Token (TokenType.ObjectStart);
+				case '}':
+					ReadChar ();
+					return new Token (TokenType.ObjectFinish);
+				case '[':
+					ReadChar ();
+					return new Token (TokenType.ArrayStart);
+				case ']':
+					ReadChar ();
+					return new Token (TokenType.ArrayFinish);
+				case ',':
+					ReadChar ();
+					return new Token (TokenType.Comma);
+				case ':':
+					ReadChar ();
+					return new Token (TokenType.Colon);
+				case '"':
+					return new Token (TokenType.String, LexString ());
+				default:
+					if (peek == '-' || Char.IsDigit (peek)) {
+						bool isDouble;
+						object num = LexNumber (out isDouble);
+						if (!isDouble)
+							return new Token (TokenType.Integer, num);
+						else
+							return new Token (TokenType.Number, num);
+					} else if (Char.IsLetter (peek)) {
+						string identifier = LexId ();
+						switch (identifier) {
+							case "true":
+								return new Token (TokenType.Boolean, true);
+							case "false":
+								return new Token (TokenType.Boolean, false);
+							case "null":
+								return new Token (TokenType.Null);
+							default:
+								InvalidSyntax ("Invalid identifier '" + identifier + "'");
+								break;
+						}
+					}
+
+					if (peek != Char.MaxValue) {
+						UnexpectedCharacter (peek);
+					}
+					break;
+			}
+
+			return null;
+		}
+	}
 }

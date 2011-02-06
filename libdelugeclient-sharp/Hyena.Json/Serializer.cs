@@ -5,6 +5,7 @@
 //
 // Authors:
 //   Sandy Armstrong <sanfordarmstrong@gmail.com>
+//   Bojan Rajkovic <brajkovic@coderinserepeat.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,131 +26,115 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Hyena.Json
 {
-    public class Serializer
-    {
-        private const string serializedNull = "null";
-        private const string serializedTrue = "true";
-        private const string serializedFalse = "false";
+	public class Serializer
+	{
+		private const string serializedNull = "null";
+		private const string serializedTrue = "true";
+		private const string serializedFalse = "false";
+		private object input;
 
-        private object input;
+		public Serializer ()
+		{
+		}
 
-        public Serializer () { }
-        public Serializer (object input) { SetInput (input); }
+		public Serializer (object input)
+		{
+			SetInput (input);
+		}
 
-        public void SetInput (object input)
-        {
-            this.input = input;
-        }
+		public void SetInput (object input) {
+			this.input = input;
+		}
 
-        // TODO: Support serialize to stream?
+			// TODO: Support serialize to stream?
 
-        public string Serialize ()
-        {
-            return Serialize (input);
-        }
+		public string Serialize () {
+			return Serialize (input);
+		}
 
-        private string SerializeBool (bool val)
-        {
-            return val ? serializedTrue : serializedFalse;
-        }
+		public void Serialize (Stream stream, Encoding encoding) {
+			var objBytes = encoding.GetBytes (Serialize ());
+			stream.Write (objBytes, 0, objBytes.Length);
+		}
 
-        private string SerializeInt (int val)
-        {
-            return val.ToString ();
-        }
+		public void Serialize (Stream stream) {
+			Serialize (stream, Encoding.Default);
+		}
 
-        private string SerializeDouble (double val)
-        {
-            return val.ToString (System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-        }
+		private string SerializeBool (bool val) {
+			return val ? serializedTrue : serializedFalse;
+		}
 
-        // TODO: exponent stuff
+		private string SerializeInt (int val) {
+			return val.ToString ();
+		}
 
-        private string SerializeString (string val)
-        {
-            // TODO: More work, escaping, etc
-            return "\"" +
-                val.Replace ("\\", "\\\\").
-                    Replace ("\"", "\\\"").
-                    Replace ("\b", "\\b").
-                    Replace ("\f", "\\f").
-                    Replace ("\n", "\\n").
-                    Replace ("\r", "\\r").
-                    Replace ("\t", "\\t") +
-                "\"";
-        }
+		private string SerializeDouble (double val) {
+			return val.ToString (System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+		}
 
-        private string SerializeEnumerable (IEnumerable array)
-        {
-            StringBuilder builder = new StringBuilder ("[");
-            int i = 0;
-            foreach (var obj in array) {
-                builder.Append (Serialize (obj));
-                builder.Append (",");
-                i++;
-            }
-            // Get rid of trailing comma
-            if (i > 0)
-                builder.Remove (builder.Length - 1, 1);
-            builder.Append ("]");
-            return builder.ToString ();
-        }
+			// TODO: exponent stuff
 
-        private string SerializeDictionary (Dictionary<string, object> obj)
-        {
-            StringBuilder builder = new StringBuilder ("{");
-            foreach (var pair in obj) {
-                builder.Append (SerializeString (pair.Key));
-                builder.Append (":");
-                builder.Append (Serialize (pair.Value));
-                builder.Append (",");
-            }
-            // Get rid of trailing comma
-            if (obj.Count > 0)
-                builder.Remove (builder.Length - 1, 1);
-            builder.Append ("}");
-            return builder.ToString ();
-        }
+		private string SerializeString (string val) {
+			// TODO: More work, escaping, etc
+			return "\"" + 
+						val.Replace ("\\", "\\\\").
+							Replace ("\"", "\\\"").
+							Replace ("\b", "\\b").
+							Replace ("\f", "\\f").
+							Replace ("\n", "\\n").
+							Replace ("\r", "\\r").
+							Replace ("\t", "\\t") + 
+						"\"";
+		}
 
-        private string Serialize (object unknownObj)
-        {
-            if (unknownObj == null)
-                return serializedNull;
+		private string SerializeEnumerable (IEnumerable array) {
+			return string.Format ("[{0}]", string.Join (",", array.Cast<object> ().Select (Serialize)));
+		}
 
-            bool? b = unknownObj as bool?;
-            if (b.HasValue)
-                return SerializeBool (b.Value);
+		private string SerializeDictionary (Dictionary<string, object> obj) {
+			return string.Format ("{{{0}}}", string.Join (",", obj.Select (kvp => string.
+				Format ("{0}:{1}", SerializeString (kvp.Key), Serialize(kvp.Value)))));
+		}
 
-            int? i = unknownObj as int?;
-            if (i.HasValue)
-                return SerializeInt (i.Value);
+		private string Serialize (object unknownObj) {
+			if (unknownObj == null)
+				return serializedNull;
 
-            double? d = unknownObj as double?;
-            if (d.HasValue)
-                return SerializeDouble (d.Value);
+			bool? b = unknownObj as bool?;
+			if (b.HasValue)
+				return SerializeBool (b.Value);
 
-            string s = unknownObj as string;
-            if (s != null)
-                return SerializeString (s);
+			int? i = unknownObj as int?;
+			if (i.HasValue)
+				return SerializeInt (i.Value);
 
-            var o = unknownObj as Dictionary<string, object>;
-            if (o != null)
-                return SerializeDictionary (o);
+			double? d = unknownObj as double?;
+			if (d.HasValue)
+				return SerializeDouble (d.Value);
 
-            var a = unknownObj as IEnumerable;
-            if (a != null)
-                return SerializeEnumerable (a);
+			string s = unknownObj as string;
+			if (s != null)
+				return SerializeString (s);
 
-            throw new ArgumentException ("Cannot serialize anything but doubles, integers, strings, JsonObjects, and JsonArrays");
-        }
-    }
+			var o = unknownObj as Dictionary<string, object>;
+			if (o != null)
+				return SerializeDictionary (o);
+
+			var a = unknownObj as IEnumerable;
+			if (a != null)
+				return SerializeEnumerable (a);
+
+			throw new ArgumentException ("Cannot serialize anything but doubles, integers, strings, JsonObjects, and JsonArrays");
+		}
+	}
 }

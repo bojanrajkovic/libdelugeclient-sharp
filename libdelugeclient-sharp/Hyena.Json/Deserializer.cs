@@ -25,139 +25,141 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.IO;
 
 namespace Hyena.Json
 {
-    public class Deserializer
-    {
-        private Tokenizer tokenizer = new Tokenizer ();
+	public class Deserializer
+	{
+		private Tokenizer tokenizer = new Tokenizer ();
 
-        public Deserializer () { }
-        public Deserializer (string input) { SetInput (input); }
-        public Deserializer (Stream stream) { SetInput (stream); }
-        public Deserializer (StreamReader reader) { SetInput (reader); }
+		public Deserializer ()
+		{
+		}
 
-        public Deserializer SetInput (StreamReader reader)
-        {
-            tokenizer.SetInput (reader);
-            return this;
-        }
+		public Deserializer (string input)
+		{
+			SetInput (input);
+		}
 
-        public Deserializer SetInput (Stream stream)
-        {
-            tokenizer.SetInput (stream);
-            return this;
-        }
+		public Deserializer (Stream stream)
+		{
+			SetInput (stream);
+		}
 
-        public Deserializer SetInput (string input)
-        {
-            tokenizer.SetInput (input);
-            return this;
-        }
+		public Deserializer (StreamReader reader)
+		{
+			SetInput (reader);
+		}
 
-        public object Deserialize ()
-        {
-            Token token = CheckScan (TokenType.Value, true);
-            if (token == null) {
-                return null;
-            }
+		public Deserializer SetInput (StreamReader reader) {
+			tokenizer.SetInput (reader);
+			return this;
+		}
 
-            return Parse (token);
-        }
+		public Deserializer SetInput (Stream stream) {
+			tokenizer.SetInput (stream);
+			return this;
+		}
 
-        private object Parse (Token token)
-        {
-            if (token.Type == TokenType.ObjectStart) {
-                return ParseObject ();
-            } else if (token.Type == TokenType.ArrayStart) {
-                return ParseArray ();
-            }
+		public Deserializer SetInput (string input) {
+			tokenizer.SetInput (input);
+			return this;
+		}
 
-            return token.Value;
-        }
+		public object Deserialize () {
+			Token token = CheckScan (TokenType.Value, true);
+			if (token == null) {
+				return null;
+			}
 
-        private JsonObject ParseObject ()
-        {
-            JsonObject obj = new JsonObject ();
+			return Parse (token);
+		}
 
-            while (true) {
-                Token key = CheckScan (TokenType.String | TokenType.ObjectFinish);
-                if (key.Type == TokenType.ObjectFinish) {
-                    break;
-                }
+		private object Parse (Token token) {
+			if (token.Type == TokenType.ObjectStart) {
+				return ParseObject ();
+			} else if (token.Type == TokenType.ArrayStart) {
+				return ParseArray ();
+			}
 
-                CheckScan (TokenType.Colon);
-                Token value = CheckScan (TokenType.Value);
+			return token.Value;
+		}
 
-                object value_val = value.Value;
-                if (value.Type == TokenType.ArrayStart) {
-                    value_val = ParseArray ();
-                } else if (value.Type == TokenType.ObjectStart) {
-                    value_val = ParseObject ();
-                }
+		private JsonObject ParseObject () {
+			JsonObject obj = new JsonObject ();
 
-                obj.Add ((string)key.Value, value_val);
+			while (true) {
+				Token key = CheckScan (TokenType.String | TokenType.ObjectFinish);
+				if (key.Type == TokenType.ObjectFinish) {
+					break;
+				}
 
-                Token token = CheckScan (TokenType.Comma | TokenType.ObjectFinish);
-                if (token.Type == TokenType.ObjectFinish) {
-                     break;
-                }
-            }
+				CheckScan (TokenType.Colon);
+				Token value = CheckScan (TokenType.Value);
 
-            return obj;
-        }
+				object value_val = value.Value;
+				if (value.Type == TokenType.ArrayStart) {
+					value_val = ParseArray ();
+				} else if (value.Type == TokenType.ObjectStart) {
+					value_val = ParseObject ();
+				}
 
-        private JsonArray ParseArray ()
-        {
-            JsonArray array = new JsonArray ();
+				obj.Add ((string)key.Value, value_val);
 
-            while (true) {
-                Token value = CheckScan (TokenType.Value | TokenType.ArrayFinish);
-                if (value.Type == TokenType.ArrayFinish) {
-                    break;
-                }
+				Token token = CheckScan (TokenType.Comma | TokenType.ObjectFinish);
+				if (token.Type == TokenType.ObjectFinish) {
+					break;
+				}
+			}
 
-                array.Add (Parse (value));
+			return obj;
+		}
 
-                Token token = CheckScan (TokenType.Comma | TokenType.ArrayFinish);
-                if (token.Type == TokenType.ArrayFinish) {
-                     break;
-                }
-            }
+		private JsonArray ParseArray () {
+			JsonArray array = new JsonArray ();
 
-            return array;
-        }
+			while (true) {
+				Token value = CheckScan (TokenType.Value | TokenType.ArrayFinish);
+				if (value.Type == TokenType.ArrayFinish) {
+					break;
+				}
 
-        private Token CheckScan (TokenType expected)
-        {
-            return CheckScan (expected, false);
-        }
+				array.Add (Parse (value));
 
-        private Token CheckScan (TokenType expected, bool eofok)
-        {
-            Token token = tokenizer.Scan ();
-            if (token == null && eofok) {
-                return null;
-            } else if (token == null) {
-                UnexpectedEof (expected);
-            } else if ((expected & token.Type) == 0) {
-                UnexpectedToken (expected, token);
-            }
-            return token;
-        }
+				Token token = CheckScan (TokenType.Comma | TokenType.ArrayFinish);
+				if (token.Type == TokenType.ArrayFinish) {
+					break;
+				}
+			}
 
-        private void UnexpectedToken (TokenType expected, Token got)
-        {
-            throw new ApplicationException (String.Format ("Unexpected token {0} at [{1}:{2}]; expected {3}",
-                got.Type, got.SourceLine, got.SourceColumn, expected));
-        }
+			return array;
+		}
 
-        private void UnexpectedEof (TokenType expected)
-        {
-            throw new ApplicationException (String.Format ("Unexpected End of File; expected {0}", expected));
-        }
-    }
+		private Token CheckScan (TokenType expected) {
+			return CheckScan (expected, false);
+		}
+
+		private Token CheckScan (TokenType expected, bool eofok) {
+			Token token = tokenizer.Scan ();
+			if (token == null && eofok) {
+				return null;
+			} else if (token == null) {
+				UnexpectedEof (expected);
+			} else if ((expected & token.Type) == 0) {
+				UnexpectedToken (expected, token);
+			}
+			return token;
+		}
+
+		private void UnexpectedToken (TokenType expected, Token got) {
+			throw new ApplicationException (String.Format ("Unexpected token {0} at [{1}:{2}]; expected {3}", 
+						got.Type, got.SourceLine, got.SourceColumn, expected));
+		}
+
+		private void UnexpectedEof (TokenType expected) {
+			throw new ApplicationException (String.Format ("Unexpected End of File; expected {0}", expected));
+		}
+	}
 }
