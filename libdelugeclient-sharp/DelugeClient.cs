@@ -67,7 +67,15 @@ namespace CodeRinseRepeat.Deluge
 
 			if (cookies != null) serviceClient.Cookies = cookies;
 
+#if DEBUG
+			Console.Error.WriteLine ("Making request...");
+#endif
+
 			byte[] returnData = serviceClient.UploadData (ServiceUri, Encoding.UTF8.GetBytes (jsonPayload));
+
+#if DEBUG
+			Console.Error.WriteLine ("Request done...");
+#endif
 
 			cookies = serviceClient.Cookies;
 
@@ -86,16 +94,16 @@ namespace CodeRinseRepeat.Deluge
 		}
 
 		private void DoServiceCallAsync (string method, Action<Dictionary<string, object>> callback, params object[] parameters) {
-			Task.Factory.StartNew (() => DoServiceCall (method, parameters)).ContinueWith (task => callback (task.Result));
+			Task.Factory.StartNew (() => DoServiceCall (method, parameters)).ContinueWith (task => { if (callback != null) callback (task.Result); });
 		}
 
 		/*
-		 * Interesting methods: { "core.upload_plugin", "core.rescan_plugins", "core.force_recheck", "core.glob",
+		 * Interesting methods: { "core.upload_plugin", "core.glob",
 		 * "core.remove_torrent", "core.resume_all_torrents", "core.queue_top", "core.set_torrent_options",
 		 * "core.set_torrent_prioritize_first_last", "core.get_session_state", "core.set_torrent_move_completed",
-		 * "core.get_available_plugins", "core.set_torrent_file_priorities", "core.get_config", "core.disable_plugin",
+		 * "core.set_torrent_file_priorities", "core.get_config", "core.disable_plugin",
 		 * "core.test_listen_port", "core.connect_peer", "core.enable_plugin", "core.get_filter_tree",
-		 * "core.set_torrent_remove_at_ratio", "core.get_torrent_status", "core.get_config_values", "core.pause_torrent",
+		 * "core.set_torrent_remove_at_ratio", "core.get_config_values", "core.pause_torrent",
 		 * "core.move_storage", "core.force_reannounce", "core.add_torrent_file", "core.get_listen_port",
 		 * "core.set_torrent_move_completed_path", "core.set_torrent_stop_at_ratio", "core.rename_folder",
 		 * "core.add_torrent_url", "core.get_enabled_plugins", "core.get_libtorrent_version", "core.get_path_size",
@@ -107,8 +115,33 @@ namespace CodeRinseRepeat.Deluge
 		 * "core.get_num_connections", "core.set_torrent_max_download_speed", "core.queue_up", "core.set_torrent_trackers"
 		 * }
 		 *
-		 * Implemented methods: { auth.login, system.listMethods, core.get_torrents_status }
+		 * Implemented methods: {
+		 *  auth.login, system.listMethods, core.get_torrents_status, core.get_available_plugins,
+		 *  core.rescan_plugins, core.get_torrent_status
+		 * }
 		 */
+
+		public Torrent GetTorrentStatus (string hash, string[] fields) {
+			var result = DoServiceCall ("core.get_torrent_status", hash, fields);
+			var torrentObject = (JsonObject) result["result"];
+
+			yield return new Torrent {
+				Hash = hash,
+
+			};
+		}
+
+		public Torrent GetTorrentStatus (string hash) {
+			return GetTorrentStatus ("core.get_torrent_status", hash, null);
+		}
+
+		public void RescanPlugins () {
+			DoServiceCall ("core.rescan_plugins");
+		}
+
+		public void RescanPluginsAsync () {
+			DoServiceCallAsync ("core.rescan_plugins", null);
+		}
 
 		public bool Login (string password) {
 			var result = DoServiceCall ("auth.login", password);
@@ -154,7 +187,7 @@ namespace CodeRinseRepeat.Deluge
 					Ratio = Convert.ToDouble (data[Torrent.Fields.Ratio]),
 					SavePath = (string) data[Torrent.Fields.SavePath],
 					State = (State) Enum.Parse (typeof (State), (string) data[Torrent.Fields.State]),
-					TimeAdded = unixTime.AddSeconds ((double) data[Torrent.Fields.TimeAdded]),
+					TimeAdded = unixTime.AddSeconds (Convert.ToDouble (data[Torrent.Fields.TimeAdded])),
 					TotalPeers = (int) data[Torrent.Fields.TotalPeers],
 					TotalSeeds = (int) data[Torrent.Fields.TotalSeeds],
 					TotalSize = (int) data[Torrent.Fields.TotalSize],
@@ -172,6 +205,10 @@ namespace CodeRinseRepeat.Deluge
 		public IEnumerable<string> GetAvailablePlugins () {
 			var result = DoServiceCall ("core.get_available_plugins");
 			return ((IList<object>) result["result"]).Cast<string> ();
+		}
+
+		public void GetAvailablePluginsAsync (Action<IEnumerable<string>> callback) {
+			Task.Factory.StartNew (() => GetAvailablePlugins ()).ContinueWith (task => callback (task.Result));
 		}
 
 		private IEnumerable<File> GetFiles (Dictionary<string, object> data, string hash) {
