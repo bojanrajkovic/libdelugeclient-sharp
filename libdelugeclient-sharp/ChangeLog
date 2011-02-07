@@ -1,3 +1,10 @@
+2011-02-07  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
+	* Torrent.cs:
+	* DelugeClient.cs: Migrate JsonObject to Torrent conversion to
+	the Torrent object. Pre-allocate an empty dictionary and empty
+	string[], since those'll probably be used a lot.
+
 2011-02-06  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
 	* DelugeClient.cs: Implement GetTorrentStatus.
