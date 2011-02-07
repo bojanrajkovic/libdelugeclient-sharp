@@ -51,10 +51,13 @@ namespace CodeRinseRepeat.Deluge
 			ServiceUri = serviceUri;
 		}
 
-		public DelugeClient (string uri, int port) : this (new Uri (string.Format ("{0}:{1}", uri, port))) {
+		public DelugeClient (string uri, int port) : this (new Uri (string.Format ("{0}:{1}/json", uri, port))) {
 		}
 
-		public Dictionary<string, object> DoServiceCall (string method, params object[] parameters) {
+#if DEBUG
+		public
+#endif
+		Dictionary<string, object> DoServiceCall (string method, params object[] parameters) {
 			var callId = Interlocked.Increment (ref this.callId);
 
 			var callObject = new Dictionary<string, object> {
