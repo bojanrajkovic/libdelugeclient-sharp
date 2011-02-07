@@ -16,6 +16,11 @@ How
 * The Deluge WebUI's JSON-RPC interface (http://deluge-host:webui-port/json).
 * JSON serialization and deserialization by the simple, hackable Hyena.Json (http://git.gnome.org/browse/Hyena).
 
+Requirements
+============
+
+A .NET 4.0/C# 4.0 runtime/compiler. Mono 2.8.x or later will do.
+
 Why
 ===
 
@@ -24,11 +29,25 @@ from source or MacPorts if it isn't even going to net me a proper app bundle. Th
 build isn't exactly great either, and has freezing and quitting issues (as in, it sometimes freezes,
 and sometimes it won't quit). A C# library might go toward helping both fronts along.
 
+Using It
+========
+
+    using CodeRinseRepeat.Deluge;
+    var client = new DelugeClient ("http://deluge-host", webui-port);
+    client.Login ("delugePassword");
+    var torrents = client.GetTorrents ();
+    Console.WriteLine (torrents.First ());
+
 Future
 ======
 
-Implement the *actual* Deluge RPC protocol, which I first need to either find thorough documentation on,
-or reverse engineer by sniffing the packets and reading the source as necessary.
+* Implement the *actual* Deluge RPC protocol, which I first need to either find thorough documentation on,
+  or reverse engineer by sniffing the packets and reading the source as necessary.
+
+* Async calls may need a better name, or a better implementation, or to be spun off into a type of their own. 
+  Spawning off new tasks is simple though, and keeps the API clean.
+
+* Make the code better.
 
 License
 =======
