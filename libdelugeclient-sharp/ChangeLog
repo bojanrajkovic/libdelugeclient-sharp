@@ -1,5 +1,10 @@
 2011-02-07  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
 
+	* IDelugeClient.cs:
+	* libdelugeclient-sharp.csproj: Add IDelugeClient interface.
+
+2011-02-07  Bojan Rajkovic  <brajkovic@coderinserepeat.com>
+
 	* DelugeClient.cs: Only make DoServiceCall public in DEBUG
 	builds.
 
