@@ -166,36 +166,36 @@ namespace CodeRinseRepeat.Deluge
 			return t.UpdateFrom (torrentObject);
 		}
 
-	    public void AddMagnetURI(string magnetURI, Dictionary<object, object> options = null)
-	    {
-	        options = options ?? new Dictionary<object, object>();
+		public void AddMagnetURI(string magnetURI, Dictionary<object, object> options = null)
+		{
+			options = options ?? new Dictionary<object, object>();
 
-            DoServiceCall("web.add_torrents",
-	            new object[]
-	            {
-	                new[]
-	                {
-	                    new Dictionary<string, object>
-	                    {
-	                        {
-	                            "options", options
-                            },
-	                        {"path", magnetURI}
-	                    }
-	                }
-	            });
-	    }
+			DoServiceCall("web.add_torrents",
+				new object[]
+				{
+					new[]
+					{
+						new Dictionary<string, object>
+						{
+							{
+								"options", options
+							},
+							{"path", magnetURI}
+						}
+					}
+				});
+		}
 
-	    public void SetTrackers(string torrentHash, params Tracker[] trackers)
-	    {
-	        var trackerDicts = trackers.Select(t => new Dictionary<string, object>
-	        {
-	            {"tier", t.Tier},
-	            {"url", t.Url}
-	        }).ToArray();
+		public void SetTrackers(string torrentHash, params Tracker[] trackers)
+		{
+			var trackerDicts = trackers.Select(t => new Dictionary<string, object>
+			{
+				{"tier", t.Tier},
+				{"url", t.Url}
+			}).ToArray();
 
-	        DoServiceCall("core.set_torrent_trackers", torrentHash, trackerDicts);
-	    }
+			DoServiceCall("core.set_torrent_trackers", torrentHash, trackerDicts);
+		}
 
 		public Torrent GetTorrentStatus (Torrent t) {
 			return GetTorrentStatus (t, emptyStringArray);
