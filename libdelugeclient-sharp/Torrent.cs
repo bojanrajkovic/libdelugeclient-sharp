@@ -34,7 +34,8 @@ namespace CodeRinseRepeat.Deluge
 	{
 		public static class Fields
 		{
-			public const string Name = "name";
+		    public const string Hash = "hash";
+            public const string Name = "name";
 			public const string State = "state";
 			public const string SavePath = "save_path";
 			public const string MaxDownloadSpeed = "max_download_speed";
@@ -222,10 +223,11 @@ namespace CodeRinseRepeat.Deluge
 		internal static Torrent TorrentFromJsonObject (JsonObject torrentObject) {
 			unchecked {
 				Torrent t = new Torrent ();
+			    t.Hash = (string) torrentObject[Torrent.Fields.Hash];
 				t.Comment = (string) torrentObject[Torrent.Fields.Comment];
 				t.ActiveTime = TimeSpan.FromSeconds ((long) torrentObject[Torrent.Fields.ActiveTime]);
 				t.Seeding = (bool) torrentObject[Torrent.Fields.Seeding];
-				t.UploadSpeed = (double) torrentObject[Torrent.Fields.UploadSpeed];
+				t.UploadSpeed = (long) torrentObject[Torrent.Fields.UploadSpeed];
 				t.Private = (bool) torrentObject[Torrent.Fields.Private];
 				t.TotalPayloadUpload = (long) torrentObject[Torrent.Fields.TotalPayloadUpload];
 				t.Paused = (bool) torrentObject[Torrent.Fields.Paused];
