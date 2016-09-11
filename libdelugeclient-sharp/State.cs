@@ -29,6 +29,8 @@ namespace CodeRinseRepeat.Deluge
 {
 	public enum State {
 		Seeding,
+        Paused,
+        Downloading
 	}
 }
 
