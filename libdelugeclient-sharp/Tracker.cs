@@ -58,8 +58,8 @@ namespace CodeRinseRepeat.Deluge
 		}
 
 
-		public string Url { get; internal set; }
-		public long Tier { get; internal set; }
+		public string Url { get; set; }
+		public long Tier { get; set; }
 	}
 }
 
